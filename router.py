@@ -38,5 +38,5 @@ while True:
 		print 'popping'
 	if not data:
 		break
-	time.sleep(0.5)
+	# time.sleep(0.5)
 s.close()
