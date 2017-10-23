@@ -1,7 +1,7 @@
 import socket
 import sys
 import time
-
+import threading
 HOST = '127.0.0.1'
 PORT = 8888
 
@@ -24,29 +24,42 @@ source = {0:[], 1:[], 2:[]}
 packet_size = [100, 50, 100]
 iters = {0:0, 1:0, 2:0}
 count = 0
+numpackets=[2,8,1]
+sleeptime=[0.1,0.05,0.1]
+daddr=None
+def recvpacket():
+	while True:
+		d = s.recvfrom(1024)
+		sourcey, data = d[0].split(';')
+		print data
+		if data == "dest":
+			global daddr
+			daddr= d[1]
+			s.sendto("connected", daddr)
+		else:
+			global source
+			source[int(sourcey)].append(sourcey + ';' + data)
+	s.close()
 
-while True:
-	d = s.recvfrom(1024)
-	sourcey, data = d[0].split(';')
-	addr = d[1]
-	print data
-	if data == "dest":
-		daddr = addr
-		s.sendto("connected", daddr)
-	else:
-		source[int(sourcey)].append(sourcey + ';' + data)
-	position = count%3
-	if daddr and len(source[position]) != 0:
-		if iters[position] >= packet_size[position]:
-			s.sendto(source[position][i], daddr)
-			print 'sending to dest', source[position][i]
-			source[position].pop(0)
-			print 'popping'
-			iters[position] = 0
-	count += 1
-	for i in xrange(3):
-		iters[i] += 1
-	if not data:
-		break
-	time.sleep(0.5)
-s.close()
+def sendpacket():
+#	num = [0, 0, 0]
+	while True:
+		if daddr:
+			for j in range(3):
+				for i in range(numpackets[j]):
+					if len(source[j])==0:
+						continue
+					else:
+						s.sendto(source[j][0],daddr)
+						num[j] += 1
+						del source[j][0]
+						time.sleep(sleeptime[j])
+#			print num
+
+
+t1 = threading.Thread(target=recvpacket)
+t2 = threading.Thread(target=sendpacket)
+
+t1.start()
+t2.start()
+
