@@ -59,7 +59,10 @@ def sendpacket():
 
 t1 = threading.Thread(target=recvpacket)
 t2 = threading.Thread(target=sendpacket)
-
+t1.daemon = True
+t2.daemon = True
 t1.start()
 t2.start()
 
+while threading.active_count() > 0:
+    time.sleep(0.1)

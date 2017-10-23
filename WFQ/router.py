@@ -20,7 +20,7 @@ try:
 except socket.error , msg:
 	print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
 	sys.exit()
-	 
+	
 print 'Socket bind complete'
 daddr = None
 roundNumber = 0
@@ -35,6 +35,7 @@ daddr=None
 globalTime = None
 flag = 0
 rDash = 0
+
 def recvpacket():
 	global source
 	global flag
@@ -68,14 +69,17 @@ def recvpacket():
 		source[sourcey]['sent'].append(0)
 		roundNumber += ((recvTime - globalTime) - prevTime)*rDash
 		lFno = max(source[sourcey]['fno'])
+		print lFno, roundNumber
 		if lFno > roundNumber:
 			source[sourcey]['active'] = 1
 		else:
-			source[sourcey]['active'] = 1
+			source[sourcey]['active'] = 0
 		weightsSum = 0
 		for i in xrange(3):
 			if source[i]['active'] == 1:
 				weightsSum += numpackets[i]
+		if weightsSum == 0:
+			continue
 		rDash = 1.0/weightsSum
 		prevTime = recvTime - globalTime
 	s.close()
@@ -97,8 +101,6 @@ def sendpacket():
 				s.sendto(source[so]['data'][index], daddr)
 			source[so]['sent'][index] = 1
 			time.sleep(sleeptime[so])
-
-
 
 t1 = threading.Thread(target=recvpacket)
 t1.daemon = True
