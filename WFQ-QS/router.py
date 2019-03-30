@@ -29,12 +29,14 @@ source = {0:{'time':[],'data':[], 'fno':[], 'active':0, 'sent':[0]}, 1:{'time':[
 packet_size = [100, 50, 100]
 iters = {0:0, 1:0, 2:0}
 count = 0
-numpackets=[10, 15, 20]
+# numpackets=[10, 15, 20]
+numpackets=[0.3, 0.3, 0.4]
 sleeptime=[0.1,0.05,0.1]
 daddr=None
 globalTime = None
 flag = 0
 rDash = 0
+l_avg_prev = 0
 
 def recvpacket():
 	global source
@@ -63,23 +65,62 @@ def recvpacket():
 		else:
 			print 'length', len(source[sourcey]['fno']), 'source', sourcey
 
-			weightF = numpackets[sourcey]
+			
 			PacketLength = packet_size[sourcey]
 			TDelay = 0.1
 			f1=0.01
 			queue_len = len(source[sourcey]['fno'])
 
+			global l_avg_prev
+
 			l_avg = (1-f1) * l_avg_prev + f1 * queue_len
+			print("l_avg = (1-%f) * %f + %f * %d: " % (f1,l_avg_prev,f1,queue_len))
+			print("nilai l_avg : ", l_avg)
+			print("weight : ", numpackets)
+
+			l_avg_prev = l_avg
+
+
+			if sourcey==0:
+				# antrian prioritas tinggi w1
+				minth1=0.833
+				maxth1=3.667
+				upper=0.7
+				wp=0.3
+				if l_avg<minth1:
+					numpackets[sourcey] = wp
+				elif l_avg>minth1 and l_avg<maxth1:
+					numpackets[sourcey] = (upper-wp)*(l_avg-minth1)*(1.0/(maxth1-minth1))
+				elif l_avg>=maxth1:
+					numpackets[sourcey] = upper
+
+			elif sourcey==1:
+				# antrian prioritas  w1
+				med_init=0.3
+				minth2 = 0.83
+
+				if l_avg < minth2:
+					numpackets[sourcey] = med_init
+				elif l_avg >= minth2:
+					numpackets[sourcey] = 1-numpackets[0]
+
+			elif sourcey==2:
+				# antrian prioritas w3
+				numpackets[sourcey] = 1-(numpackets[0]+numpackets[1])
 
 			tVirtualPrev = source[sourcey]['fno'][ queue_len - 1]
+			weightF = numpackets[sourcey]
 
+			
 			fno = max(roundNumber+TDelay, tVirtualPrev) + (PacketLength * 1.0 / weightF)
 
 			if sourcey==2:
 				fno = min(roundNumber+TDelay, tVirtualPrev) + (PacketLength * 1.0 / weightF)
 
 
+			# masukkan paket prioritas 'sourcey' ke antrian
 			source[sourcey]['fno'].append(fno)
+
 		source[sourcey]['time'].append(recvTime - globalTime)
 		source[sourcey]['data'].append(str(sourcey) + ';' + data)
 		source[sourcey]['sent'].append(0)
