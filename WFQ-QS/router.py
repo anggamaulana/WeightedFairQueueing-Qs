@@ -37,6 +37,7 @@ globalTime = None
 flag = 0
 rDash = 0
 l_avg_prev = 0
+lambda_bandwidth=1
 
 def recvpacket():
 	global source
@@ -78,7 +79,7 @@ def recvpacket():
 			print("nilai l_avg : ", l_avg)
 			print("weight : ", numpackets)
 
-			l_avg_prev = l_avg
+			l_avg_prev = queue_len
 
 
 			if sourcey==0:
@@ -109,7 +110,7 @@ def recvpacket():
 				numpackets[sourcey] = 1-(numpackets[0]+numpackets[1])
 
 			tVirtualPrev = source[sourcey]['fno'][ queue_len - 1]
-			weightF = numpackets[sourcey]
+			weightF = numpackets[sourcey]*lambda_bandwidth
 
 			
 			fno = max(roundNumber+TDelay, tVirtualPrev) + (PacketLength * 1.0 / weightF)
@@ -119,6 +120,10 @@ def recvpacket():
 
 
 			# masukkan paket prioritas 'sourcey' ke antrian
+			# jika antrian penuh maka masuk ke waiting list dengan durasi menunggu
+			# jika paket melebihi durasi menunggu maka akan didrop 
+			waiting_list_duration = 0.3
+
 			source[sourcey]['fno'].append(fno)
 
 		source[sourcey]['time'].append(recvTime - globalTime)
