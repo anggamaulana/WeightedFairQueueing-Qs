@@ -91,7 +91,8 @@ def recvpacket():
 				if l_avg<minth1:
 					numpackets[sourcey] = wp
 				elif l_avg>minth1 and l_avg<maxth1:
-					numpackets[sourcey] = (upper-wp)*(l_avg-minth1)*(1.0/(maxth1-minth1))
+					# numpackets[sourcey] = (upper-wp)*(l_avg-minth1)*(1.0/(maxth1-minth1))
+					numpackets[sourcey] = (0.3/(maxth1-minth1))*(abs(l_avg-l_avg_prev)+numpackets[sourcey])
 				elif l_avg>=maxth1:
 					numpackets[sourcey] = upper
 
