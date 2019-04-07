@@ -39,6 +39,8 @@ rDash = 0
 l_avg_prev = 0
 lambda_bandwidth=1
 
+tVirtual = [0,0,0]
+
 def recvpacket():
 	global source
 	global flag
@@ -48,7 +50,7 @@ def recvpacket():
 		recvTime = current_milli_time()
 		sourcey, data = d[0].split(';')
 		sourcey = int(sourcey)
-		print data
+		
 		if data == "dest":
 			global daddr
 			daddr= d[1]
@@ -65,67 +67,6 @@ def recvpacket():
 			source[sourcey]['fno'].append(fno)
 		else:
 			print 'length', len(source[sourcey]['fno']), 'source', sourcey
-
-			
-			PacketLength = packet_size[sourcey]
-			TDelay = 0.1
-			f1=0.01
-			queue_len = len(source[sourcey]['fno'])
-
-			global l_avg_prev
-
-			l_avg = (1-f1) * l_avg_prev + f1 * queue_len
-			print("l_avg = (1-%f) * %f + %f * %d: " % (f1,l_avg_prev,f1,queue_len))
-			print("nilai l_avg : ", l_avg)
-			print("weight : ", numpackets)
-
-			l_avg_prev = queue_len
-
-
-			if sourcey==0:
-				# antrian prioritas tinggi w1
-				minth1=0.833
-				maxth1=3.667
-				upper=0.7
-				wp=0.3
-				if l_avg<minth1:
-					numpackets[sourcey] = wp
-				elif l_avg>minth1 and l_avg<maxth1:
-					# numpackets[sourcey] = (upper-wp)*(l_avg-minth1)*(1.0/(maxth1-minth1))
-					numpackets[sourcey] = (0.3/(maxth1-minth1))*(abs(l_avg-l_avg_prev)+numpackets[sourcey])
-				elif l_avg>=maxth1:
-					numpackets[sourcey] = upper
-
-			elif sourcey==1:
-				# antrian prioritas  w1
-				med_init=0.3
-				minth2 = 0.83
-
-				if l_avg < minth2:
-					numpackets[sourcey] = med_init
-				elif l_avg >= minth2:
-					numpackets[sourcey] = 1-numpackets[0]
-
-			elif sourcey==2:
-				# antrian prioritas w3
-				numpackets[sourcey] = 1-(numpackets[0]+numpackets[1])
-
-			tVirtualPrev = source[sourcey]['fno'][ queue_len - 1]
-			weightF = numpackets[sourcey]*lambda_bandwidth
-
-			
-			fno = max(roundNumber+TDelay, tVirtualPrev) + (PacketLength * 1.0 / weightF)
-
-			if sourcey==2:
-				fno = min(roundNumber+TDelay, tVirtualPrev) + (PacketLength * 1.0 / weightF)
-
-
-			# masukkan paket prioritas 'sourcey' ke antrian
-			# jika antrian penuh maka masuk ke waiting list dengan durasi menunggu
-			# jika paket melebihi durasi menunggu maka akan didrop 
-			waiting_list_duration = 0.3
-
-			source[sourcey]['fno'].append(fno)
 
 		source[sourcey]['time'].append(recvTime - globalTime)
 		source[sourcey]['data'].append(str(sourcey) + ';' + data)
@@ -149,21 +90,122 @@ def recvpacket():
 
 def sendpacket():
 	while True:
+
+		# pembobotan
+		
+		for sourcey in range(3):
+			PacketLength = packet_size[sourcey]
+			TDelay = 0.1
+			f1=0.01
+			queue_len = len(source[sourcey]['fno'])
+			if queue_len==0:
+				continue
+			else:
+				source[sourcey]['fno'].pop(0)
+
+			global l_avg_prev
+
+			l_avg = (1-f1) * l_avg_prev + f1 * queue_len
+			# print("l_avg = (1-%f) * %f + %f * %d: " % (f1,l_avg_prev,f1,queue_len))
+			# print("nilai l_avg : ", l_avg)
+			# print("weight : ", numpackets)
+
+			l_avg_prev = queue_len
+				
+
+			if sourcey==0:
+				# antrian prioritas tinggi w1
+				minth1=0.833
+				maxth1=3.667
+				upper=0.6
+				wp=0.3
+				print("l_avg = (1-%f) * %f + %f * %d: " % (f1,l_avg_prev,f1,queue_len))
+				print("nilai l_avg : ", l_avg)
+				if l_avg<minth1:
+					numpackets[sourcey] = wp
+					print("p0 th1")
+				elif l_avg>minth1 and l_avg<maxth1:
+					# numpackets[sourcey] = (upper-wp)*(l_avg-minth1)*(1.0/(maxth1-minth1))
+					numpackets[sourcey] = ((0.3/(maxth1-minth1))*(abs(l_avg-l_avg_prev))+numpackets[sourcey])
+					print("p0 th2")
+				elif l_avg>=maxth1:
+					numpackets[sourcey] = upper
+					print("p0 th3")
+
+			elif sourcey==1:
+				# antrian prioritas  w1
+				med_init=0.3
+				minth2 = 0.83
+				print("l_avg = (1-%f) * %f + %f * %d: " % (f1,l_avg_prev,f1,queue_len))
+				print("nilai l_avg : ", l_avg)
+				if l_avg < minth2:
+					numpackets[sourcey] = med_init
+					print("p1 th1")
+				elif l_avg >= minth2:
+					numpackets[sourcey] = 1-numpackets[0]
+					print("p1 th2")
+				
+
+			elif sourcey==2:
+				# antrian prioritas w3
+				numpackets[sourcey] = 1-(numpackets[0]+numpackets[1])
+				print("p2 th1")
+
+			
+			if numpackets[sourcey]==0:
+				numpackets[sourcey]=0.0001
+				
+
+			print("weigh now",numpackets)
+			weightF = numpackets[sourcey]*lambda_bandwidth
+
+			global tVirtual
+
+			
+
+			
+
+			arrive = source[sourcey]['time'].pop(0)
+			fno = max(roundNumber+TDelay, tVirtual[sourcey]) + (PacketLength * 1.0 / weightF)
+
+			if sourcey==2:
+				fno = min(roundNumber+TDelay, tVirtual[sourcey]) + (PacketLength * 1.0 / weightF)
+
+			
+
+			tVirtual[sourcey] = fno
+			# source[sourcey]['fno'].append(fno)
+
+
 		if daddr:
-			mini = 999999999999999
-			index = 0
-			so = 0
-			for i in xrange(3):
-				for j in xrange(len(source[i]['fno'])):
-					if source[i]['sent'][j] == 0:
-						if source[i]['fno'][j] < mini:
-							mini = min(source[i]['fno'])
-							index = j
-							so = i
-			if mini != 999999999999999:
-				s.sendto(source[so]['data'][index], daddr)
-			source[so]['sent'][index] = 1
-			time.sleep(sleeptime[so])
+			# mini = 999999999999999
+			# index = 0
+			# so = 0
+			# for i in xrange(3):
+			# 	for j in xrange(len(source[i]['fno'])):
+			# 		if source[i]['sent'][j] == 0:
+			# 			if source[i]['fno'][j] < mini:
+			# 				mini = min(source[i]['fno'])
+			# 				index = j
+			# 				so = i
+			# if mini != 999999999999999:
+			# 	s.sendto(source[so]['data'][index], daddr)
+			# source[so]['sent'][index] = 1
+
+			minv = 1000000
+			min_priority=0
+			for i in range(len(tVirtual)):
+				if tVirtual[i]<minv:
+					minv = tVirtual[i]
+					min_priority = i
+			if len(source[min_priority]['data'])>0:
+				data = source[min_priority]['data'].pop(0)
+				print("data prioritas ",min_priority," dikirim dengan data ", data)
+				s.sendto(data, daddr)
+			
+
+			
+			time.sleep(sleeptime[min_priority])
 
 t1 = threading.Thread(target=recvpacket)
 t1.daemon = True
