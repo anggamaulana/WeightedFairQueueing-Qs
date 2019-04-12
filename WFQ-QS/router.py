@@ -22,6 +22,9 @@ try:
 except socket.error , msg:
 	print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
 	sys.exit()
+
+
+
 	
 print 'Socket bind complete'
 daddr = None
@@ -44,6 +47,11 @@ l_avg_prev = 0
 lambda_bandwidth=1
 
 tVirtual = [0,0,0]
+
+
+# CONNECT TO SERVER
+
+
 
 def recvpacket():
 	global source
@@ -205,7 +213,12 @@ def sendpacket():
 				data = source[min_priority]['data'].pop(0)
 				print("data prioritas ",min_priority," dikirim dengan data ", data)
 				try:
-					s.sendto(data, daddr)
+					# s.sendto(data, daddr)		
+					s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+					s2.connect(daddr)
+					print("connect to ", daddr)
+					s2.send(data)
+					s2.close()
 				except Exception as e:
 					print(e)
 			
