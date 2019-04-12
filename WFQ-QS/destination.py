@@ -18,8 +18,9 @@ PORT = 8088
 try:
     s.bind((HOST, PORT))
     print("bind ", HOST, PORT)
-except socket.error, msg:
-    print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
+except Exception as r:
+    # print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
+    print(e)
     sys.exit()
 
 # s.sendto("-1;dest", (host, port))
