@@ -13,12 +13,13 @@ port = 8888
 
 
 HOST = 'localhost'
-PORT = 8088
+PORT = 8083
 
 try:
     s.bind((HOST, PORT))
     print("bind ", HOST, PORT)
-except Exception as r:
+    s.listen(1)
+except Exception as e:
     # print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
     print(e)
     sys.exit()
