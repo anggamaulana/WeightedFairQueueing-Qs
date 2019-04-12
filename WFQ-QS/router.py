@@ -2,6 +2,7 @@ import socket
 import sys
 import time
 import threading
+import pytz, datetime
 
 HOST = '127.0.0.1'
 PORT = 8888
@@ -38,7 +39,7 @@ count = 0
 numpackets=[0.3, 0.3, 0.4]
 sleeptime=[0.1,0.05,0.1]
 daddr=('35.229.112.213',8083)
-# daddr = ('localhost',8088)
+daddr = ('localhost',8083)
 # daddr = None
 globalTime = None
 flag = 0
@@ -47,10 +48,7 @@ l_avg_prev = 0
 lambda_bandwidth=1
 
 tVirtual = [0,0,0]
-
-
-# CONNECT TO SERVER
-
+MAX_BUFFER = [100,100,100]
 
 
 def recvpacket():
@@ -61,6 +59,7 @@ def recvpacket():
 		d = s.recvfrom(1024)
 		recvTime = current_milli_time()
 		sourcey, data = d[0].split(';')
+		tm = datetime.datetime.now().replace(tzinfo=pytz.utc).isoformat()
 		sourcey = int(sourcey)
 		
 		if data == "dest":
@@ -73,6 +72,11 @@ def recvpacket():
 			globalTime = recvTime
 			roundNumber = 0
 			flag = 1
+
+		# DROP PACKET IF BUFFER FULL
+		if len(source[sourcey]['fno']) == MAX_BUFFER[sourcey]:
+			continue
+
 		if len(source[sourcey]['fno']) == 0:
 			print 'First packet'
 			fno = roundNumber + (packet_size[sourcey]*1.0/numpackets[sourcey])
@@ -81,7 +85,7 @@ def recvpacket():
 			print 'length', len(source[sourcey]['fno']), 'source', sourcey
 
 		source[sourcey]['time'].append(recvTime - globalTime)
-		source[sourcey]['data'].append(str(sourcey) + ';' + data)
+		source[sourcey]['data'].append(str(sourcey) + ';' + data+';'+tm)
 		source[sourcey]['sent'].append(0)
 		roundNumber += ((recvTime - globalTime) - prevTime)*rDash
 		lFno = max(source[sourcey]['fno'])
@@ -186,20 +190,6 @@ def sendpacket():
 
 
 		if daddr:
-			
-			# mini = 999999999999999
-			# index = 0
-			# so = 0
-			# for i in xrange(3):
-			# 	for j in xrange(len(source[i]['fno'])):
-			# 		if source[i]['sent'][j] == 0:
-			# 			if source[i]['fno'][j] < mini:
-			# 				mini = min(source[i]['fno'])
-			# 				index = j
-			# 				so = i
-			# if mini != 999999999999999:
-			# 	s.sendto(source[so]['data'][index], daddr)
-			# source[so]['sent'][index] = 1
 
 			minv = 1000000
 			min_priority=0
