@@ -6,6 +6,8 @@ import threading
 HOST = '127.0.0.1'
 PORT = 8888
 
+
+
 current_milli_time = lambda: int(round(time.time() * 1000))
 
 try:
@@ -32,7 +34,9 @@ count = 0
 # numpackets=[10, 15, 20]
 numpackets=[0.3, 0.3, 0.4]
 sleeptime=[0.1,0.05,0.1]
-daddr=None
+daddr=('http://35.229.112.2133',8083)
+daddr = ('localhost',8088)
+# daddr = None
 globalTime = None
 flag = 0
 rDash = 0
@@ -106,9 +110,9 @@ def sendpacket():
 			global l_avg_prev
 
 			l_avg = (1-f1) * l_avg_prev + f1 * queue_len
-			# print("l_avg = (1-%f) * %f + %f * %d: " % (f1,l_avg_prev,f1,queue_len))
-			# print("nilai l_avg : ", l_avg)
-			# print("weight : ", numpackets)
+			print("l_avg = (1-%f) * %f + %f * %d: " % (f1,l_avg_prev,f1,queue_len))
+			print("nilai l_avg : ", l_avg)
+			print("weight : ", numpackets)
 
 			l_avg_prev = queue_len
 				
@@ -119,8 +123,6 @@ def sendpacket():
 				maxth1=3.667
 				upper=0.6
 				wp=0.3
-				print("l_avg = (1-%f) * %f + %f * %d: " % (f1,l_avg_prev,f1,queue_len))
-				print("nilai l_avg : ", l_avg)
 				if l_avg<minth1:
 					numpackets[sourcey] = wp
 					print("p0 th1")
@@ -136,8 +138,6 @@ def sendpacket():
 				# antrian prioritas  w1
 				med_init=0.3
 				minth2 = 0.83
-				print("l_avg = (1-%f) * %f + %f * %d: " % (f1,l_avg_prev,f1,queue_len))
-				print("nilai l_avg : ", l_avg)
 				if l_avg < minth2:
 					numpackets[sourcey] = med_init
 					print("p1 th1")
@@ -156,7 +156,7 @@ def sendpacket():
 				numpackets[sourcey]=0.0001
 				
 
-			print("weigh now",numpackets)
+			# print("weigh now",numpackets)
 			weightF = numpackets[sourcey]*lambda_bandwidth
 
 			global tVirtual
@@ -178,6 +178,7 @@ def sendpacket():
 
 
 		if daddr:
+			
 			# mini = 999999999999999
 			# index = 0
 			# so = 0
@@ -195,13 +196,19 @@ def sendpacket():
 			minv = 1000000
 			min_priority=0
 			for i in range(len(tVirtual)):
-				if tVirtual[i]<minv:
+				if tVirtual[i]<minv and tVirtual[i]!=0:
 					minv = tVirtual[i]
 					min_priority = i
+
+			
 			if len(source[min_priority]['data'])>0:
 				data = source[min_priority]['data'].pop(0)
 				print("data prioritas ",min_priority," dikirim dengan data ", data)
-				s.sendto(data, daddr)
+				try:
+					s.sendto(data, daddr)
+				except Exception as e:
+					print(e)
+			
 			
 
 			
