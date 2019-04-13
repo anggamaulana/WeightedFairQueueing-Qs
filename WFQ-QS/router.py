@@ -3,6 +3,7 @@ import sys
 import time
 import threading
 import pytz, datetime
+from datetime import timedelta
 
 HOST = '127.0.0.1'
 PORT = 8888
@@ -39,7 +40,7 @@ count = 0
 numpackets=[0.3, 0.3, 0.4]
 sleeptime=[0.1,0.05,0.1]
 daddr=('35.229.112.213',8083)
-daddr = ('localhost',8083)
+# daddr = ('localhost',8083)
 # daddr = None
 globalTime = None
 flag = 0
@@ -59,7 +60,8 @@ def recvpacket():
 		d = s.recvfrom(1024)
 		recvTime = current_milli_time()
 		sourcey, data = d[0].split(';')
-		tm = datetime.datetime.now().replace(tzinfo=pytz.utc).isoformat()
+		
+		tm = datetime.datetime.utcnow().isoformat()
 		sourcey = int(sourcey)
 		
 		if data == "dest":

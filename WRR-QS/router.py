@@ -63,7 +63,7 @@ def recvpacket():
     while True:
         d = s.recvfrom(1024)
         sourcey, data = d[0].split(';')
-        tm = datetime.datetime.now().replace(tzinfo=pytz.utc).isoformat()
+        tm = datetime.datetime.utcnow().isoformat()
         recvTime = current_milli_time()
 
         # print datap

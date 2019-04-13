@@ -3,6 +3,7 @@ import dateutil.parser
 import datetime
 import pytz
 import pandas as pd
+from datetime import timedelta
 
 
 TCP_IP = '0.0.0.0'
@@ -14,6 +15,9 @@ s.bind((TCP_IP, TCP_PORT))
 s.listen(1)
 rows = []
 
+# local 1 minutes ahead
+serverlocaldiff=timedelta(minutes=1)
+
 print ('Connection address:')
 try:
     while 1:
@@ -23,8 +27,8 @@ try:
             print ("received data:", data)
             st = data.split(';')
 
-            dtng = dateutil.parser.parse(st[2])
-            kirim = datetime.datetime.now().replace(tzinfo=pytz.utc)
+            dtng = dateutil.parser.parse(st[2])+serverlocaldiff
+            kirim = datetime.datetime.utcnow()
 
             delay = kirim-dtng
             st[2] = str(delay.total_seconds())
