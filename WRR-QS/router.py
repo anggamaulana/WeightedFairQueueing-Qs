@@ -126,9 +126,8 @@ def sendpacket():
 					numpackets[sourcey] = wp
 					# print("p0 th1")
 				elif l_avg > minth1 and l_avg < maxth1:
-					# numpackets[sourcey] = (upper-wp)*(l_avg-minth1)*(1.0/(maxth1-minth1))
-					numpackets[sourcey] = (
-						(0.3/(maxth1-minth1))*(abs(l_avg-l_avg_prev))+numpackets[sourcey])
+					numpackets[sourcey] = ((upper-wp)*(l_avg-minth1)*(1.0/(maxth1-minth1)))+wp
+					# numpackets[sourcey] = ((0.3/(maxth1-minth1))*(abs(l_avg-l_avg_prev))+numpackets[sourcey])
 					# print("p0 th2")
 				elif l_avg >= maxth1:
 					numpackets[sourcey] = upper
@@ -179,7 +178,9 @@ def sendpacket():
 							s2.connect(daddr)
 							print("numpacket now",numpackets)
 							print("connect to ", daddr, "and send ", source[j][0])
-							s2.send(source[j].pop(0))
+							dt = source[j].pop(0)
+							dt += ';'+ ';'.join([str(i) for i in numpackets])
+							s2.send(dt)
 							s2.close()
 						except Exception as e:
 							print(e)

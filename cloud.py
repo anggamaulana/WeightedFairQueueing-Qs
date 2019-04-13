@@ -2,6 +2,7 @@ import socket
 import dateutil.parser
 import datetime
 import pytz
+import pandas as pd
 
 
 TCP_IP = '0.0.0.0'
@@ -31,5 +32,8 @@ try:
 
         conn.close()
 except KeyboardInterrupt as k:
-    print(rows)
+    print("sedang menyimpan")
+    data = pd.DataFrame(data=rows, columns=['prioritas','data','delay','bobot1','bobot2','bobot3'])
+    data.to_excel("report.xlsx")
     s.close()
+    print("done")

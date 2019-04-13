@@ -75,6 +75,7 @@ def recvpacket():
 
 		# DROP PACKET IF BUFFER FULL
 		if len(source[sourcey]['fno']) == MAX_BUFFER[sourcey]:
+			print("DROP PACKET")
 			continue
 
 		if len(source[sourcey]['fno']) == 0:
@@ -111,7 +112,13 @@ def sendpacket():
 		
 		for sourcey in range(3):
 			PacketLength = packet_size[sourcey]
-			TDelay = 0.1
+			if sourcey == 0:
+				TDelay = 0.001
+			elif sourcey == 1:
+				TDelay = 0.01
+			elif sourcey == 2:
+				TDelay = 0.1
+
 			f1=0.01
 			queue_len = len(source[sourcey]['fno'])
 			if queue_len==0:
@@ -126,7 +133,7 @@ def sendpacket():
 			print("nilai l_avg : ", l_avg)
 			print("weight : ", numpackets)
 
-			l_avg_prev = queue_len
+			l_avg_prev = l_avg
 				
 
 			if sourcey==0:
@@ -178,10 +185,10 @@ def sendpacket():
 			
 
 			arrive = source[sourcey]['time'].pop(0)
-			fno = max(arrive+TDelay, tVirtual[sourcey]) + (PacketLength * 1.0 / weightF)
+			fno = min(arrive+TDelay, tVirtual[sourcey]) + (PacketLength * 1.0 / weightF)
 
 			if sourcey==2:
-				fno = min(arrive+TDelay, tVirtual[sourcey]) + (PacketLength * 1.0 / weightF)
+				fno = max(arrive+TDelay, tVirtual[sourcey]) + (PacketLength * 1.0 / weightF)
 
 			
 
@@ -191,22 +198,24 @@ def sendpacket():
 
 		if daddr:
 
-			minv = 1000000
+			minv = 1000000000
 			min_priority=0
 			for i in range(len(tVirtual)):
-				if tVirtual[i]<minv and tVirtual[i]!=0:
+				if tVirtual[i]<minv and tVirtual[i]!=0 and len(source[i]['data'])>0:
 					minv = tVirtual[i]
 					min_priority = i
 
 			
 			if len(source[min_priority]['data'])>0:
 				data = source[min_priority]['data'].pop(0)
-				print("data prioritas ",min_priority," dikirim dengan data ", data)
+				
 				try:
 					# s.sendto(data, daddr)		
 					s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 					s2.connect(daddr)
 					print("connect to ", daddr)
+					data += ';'+';'.join([str(i) for i in numpackets])
+					print("data prioritas ",min_priority," dikirim dengan data ", data)
 					s2.send(data)
 					s2.close()
 				except Exception as e:
