@@ -27,7 +27,7 @@ try:
             print ("received data:", data)
             st = data.split(';')
 
-            dtng = dateutil.parser.parse(st[2])+serverlocaldiff
+            dtng = dateutil.parser.parse(st[2])-serverlocaldiff
             kirim = datetime.datetime.utcnow()
 
             delay = kirim-dtng
