@@ -138,16 +138,16 @@ def sendpacket():
 
 			if sourcey==0:
 				# antrian prioritas tinggi w1
-				minth1=0.833
-				maxth1=3.667
-				upper=0.6
+				minth1=25
+				maxth1=50
+				upper=0.7
 				wp=0.3
 				if l_avg<minth1:
 					numpackets[sourcey] = wp
 					print("p0 th1")
 				elif l_avg>minth1 and l_avg<maxth1:
-					# numpackets[sourcey] = (upper-wp)*(l_avg-minth1)*(1.0/(maxth1-minth1))
-					numpackets[sourcey] = ((0.3/(maxth1-minth1))*(abs(l_avg-l_avg_prev))+numpackets[sourcey])
+					numpackets[sourcey] = ((upper-wp)*(l_avg-minth1)*(1.0/(maxth1-minth1)))+wp
+					# numpackets[sourcey] = ((0.3/(maxth1-minth1))*(abs(l_avg-l_avg_prev))+numpackets[sourcey])
 					print("p0 th2")
 				elif l_avg>=maxth1:
 					numpackets[sourcey] = upper
@@ -156,7 +156,7 @@ def sendpacket():
 			elif sourcey==1:
 				# antrian prioritas  w1
 				med_init=0.3
-				minth2 = 0.83
+				minth2 = 50
 				if l_avg < minth2:
 					numpackets[sourcey] = med_init
 					print("p1 th1")

@@ -15,12 +15,14 @@ def current_milli_time(): return int(round(time.time() * 1000))
 
 MAX_BUFFER = [100, 100, 100]
 def reduce_ratio(numbers):
-    minn = 1000000000000
-    for i in range(len(numbers)):
+	minn = 1000000000000
+	# finding minimum number
+	for i in range(len(numbers)):
 		if minn>numbers[i] and numbers[i]!=0:
 			minn = numbers[i]
-    solved = [min(int(i/minn),max(MAX_BUFFER))  for i in numbers]
-    return solved
+
+	solved = [min(int(value/minn),100) for value in numbers]
+	return solved
 
 
 try:
@@ -43,7 +45,7 @@ source = {0: [], 1: [], 2: []}
 packet_size = [100, 50, 100]
 iters = {0: 0, 1: 0, 2: 0}
 count = 0
-numpackets = [2, 8, 1]
+numpackets = [0.6, 0.3, 0.1]
 sleeptime = [0.1, 0.05, 0.1]
 daddr = ('35.229.112.213', 8083)
 daddr = ('localhost', 8083)
@@ -99,7 +101,7 @@ def sendpacket():
 
 		for sourcey in range(3):
 			PacketLength = packet_size[sourcey]
-			TDelay = 0.1
+			
 			f1 = 0.01
 			queue_len = len(source[sourcey])
 			if queue_len == 0:
@@ -114,14 +116,14 @@ def sendpacket():
 			# print("nilai l_avg : ", l_avg)
 			# print("weight : ", numpackets)
 
-			l_avg_prev = queue_len
+			l_avg_prev = l_avg
 
 			if sourcey == 0:
 				# antrian prioritas tinggi w1
-				minth1 = 0.833
-				maxth1 = 3.667
-				upper = 0.6
-				wp = 0.3
+				minth1=25
+				maxth1=50
+				upper=0.7
+				wp=0.3
 				if l_avg < minth1:
 					numpackets[sourcey] = wp
 					# print("p0 th1")
@@ -135,8 +137,8 @@ def sendpacket():
 
 			elif sourcey == 1:
 				# antrian prioritas  w1
-				med_init = 0.3
-				minth2 = 0.83
+				med_init=0.3
+				minth2 = 50
 				if l_avg < minth2:
 					numpackets[sourcey] = med_init
 					print("p1 th1")
@@ -153,7 +155,7 @@ def sendpacket():
 				numpackets[sourcey] = 0.0001
 
 			# print("weigh now",numpackets)
-			weightF = numpackets[sourcey]*lambda_bandwidth
+			# weightF = numpackets[sourcey]*lambda_bandwidth
 
 			# PEMBOBOTAN END
 
@@ -161,12 +163,16 @@ def sendpacket():
 		if daddr:
 
 			# Pembulatan bobot
-			numpackets = reduce_ratio(numpackets)
+			numpackets_simplified = reduce_ratio(numpackets)
 			# print("numpacket now",numpackets, "reduce", numpackets_reduce)
 			
 			for j in range(3):
 				
-				for i in range(int(numpackets[j])):
+				if len(source[j])<=0:
+					# when buffer empty continue to other buffer
+					continue
+
+				for i in range(int(numpackets_simplified[j])):
 					
 					if len(source[j]) == 0:
 						continue
