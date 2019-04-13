@@ -107,7 +107,7 @@ def recvpacket():
 def sendpacket():
 	while True:
 
-		# pembobotan
+		# PEMBOBOTAN
 		
 		for sourcey in range(3):
 			PacketLength = packet_size[sourcey]
@@ -178,10 +178,10 @@ def sendpacket():
 			
 
 			arrive = source[sourcey]['time'].pop(0)
-			fno = max(roundNumber+TDelay, tVirtual[sourcey]) + (PacketLength * 1.0 / weightF)
+			fno = max(arrive+TDelay, tVirtual[sourcey]) + (PacketLength * 1.0 / weightF)
 
 			if sourcey==2:
-				fno = min(roundNumber+TDelay, tVirtual[sourcey]) + (PacketLength * 1.0 / weightF)
+				fno = min(arrive+TDelay, tVirtual[sourcey]) + (PacketLength * 1.0 / weightF)
 
 			
 
