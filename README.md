@@ -1,5 +1,10 @@
 # Queuing-Algorithms
 
+modified from original code : https://github.com/varshit97/Weighted-Fair-Queuing.git
+
+we proposed adaptive weights for WFQ
+
+
 ├── FIFO
 │   ├── destination.py
 │   ├── router.py
