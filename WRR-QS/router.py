@@ -48,7 +48,7 @@ count = 0
 numpackets = [0.6, 0.3, 0.1]
 sleeptime = [0.1, 0.05, 0.1]
 daddr = ('35.229.112.213', 8083)
-daddr = ('localhost', 8083)
+# daddr = ('localhost', 8083)
 
 l_avg_prev = 0
 lambda_bandwidth = 1
