@@ -46,7 +46,7 @@ globalTime = None
 flag = 0
 rDash = 0
 l_avg_prev = 0
-lambda_bandwidth=1
+lambda_bandwidth=100
 
 tVirtual = [0,0,0]
 MAX_BUFFER = [100,100,100]
@@ -187,10 +187,10 @@ def sendpacket():
 			
 
 			arrive = source[sourcey]['time'].pop(0)
-			fno = min(arrive+TDelay, tVirtual[sourcey]) + (PacketLength * 1.0 / weightF)
+			# fno = min(arrive+TDelay, tVirtual[sourcey]) + (PacketLength * 1.0 / weightF)
 
-			if sourcey==2:
-				fno = max(arrive+TDelay, tVirtual[sourcey]) + (PacketLength * 1.0 / weightF)
+			# if sourcey==2:
+			fno = max(arrive+TDelay, tVirtual[sourcey]) + (PacketLength * 1.0 / weightF)
 
 			
 
