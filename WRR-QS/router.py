@@ -42,7 +42,7 @@ except socket.error, msg:
 print 'Socket bind complete'
 daddr = None
 source = {0: [], 1: [], 2: []}
-packet_size = [100, 50, 100]
+packet_size = [105, 175, 143]
 iters = {0: 0, 1: 0, 2: 0}
 count = 0
 numpackets = [0.6, 0.3, 0.1]
