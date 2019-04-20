@@ -36,6 +36,7 @@ try:
                 st[2] = str(delay.total_seconds())
                 rows.append(st)
             except Exception as e:
+                rows.append(data)
                 continue
 
         conn.close()
