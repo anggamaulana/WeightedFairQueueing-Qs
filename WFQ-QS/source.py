@@ -9,7 +9,7 @@ except socket.error:
     print 'Failed to create socket'
     sys.exit()
 
-host = '192.168.43.248'
+host = 'localhost'
 port = 8888
 packet_count = [200, 200, 200]
 packet_interval = [0.200, 0.25, 0.300]
