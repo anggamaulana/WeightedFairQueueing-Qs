@@ -2,7 +2,7 @@ import socket
 import sys
 import time
 
-HOST = '127.0.0.1'
+HOST = '0.0.0.0'
 PORT = 8888
 
 try:
@@ -19,7 +19,8 @@ except socket.error , msg:
 	sys.exit()
 	 
 print 'Socket bind complete'
-daddr = None
+daddr=('35.229.112.213',8083)
+# daddr = ('localhost',8083)
 fifo = []
 while True:
 	d = s.recvfrom(1024)
@@ -32,8 +33,18 @@ while True:
 		fifo.append(data)
 	print 'length', len(fifo)
 	if daddr and len(fifo) != 0:
-		s.sendto(fifo[0], daddr)
+		# s.sendto(fifo[0], daddr)
 		print 'sending to dest', fifo[0]
+		try:
+			# s.sendto(data, daddr)		
+			s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			s2.connect(daddr)
+			print("connect to ", daddr)
+			data += ';'
+			s2.send(data)
+			s2.close()
+		except Exception as e:
+			print(e)
 		fifo.pop(0)
 		print 'popping'
 	if not data:

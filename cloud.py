@@ -25,15 +25,19 @@ try:
         data = conn.recv(BUFFER_SIZE)
         if data:
             print ("received data:", data)
-            st = data.split(';')
+            try:
+                st = data.split(';')
 
-            # dtng = dateutil.parser.parse(st[2])-serverlocaldiff
-            dtng = dateutil.parser.parse(st[2])
-            kirim = datetime.datetime.utcnow()
+                # dtng = dateutil.parser.parse(st[2])-serverlocaldiff
+                dtng = dateutil.parser.parse(st[2])
+                kirim = datetime.datetime.utcnow()
 
-            delay = kirim-dtng
-            st[2] = str(delay.total_seconds())
-            rows.append(st)
+                delay = kirim-dtng
+                st[2] = str(delay.total_seconds())
+                rows.append(st)
+            except Exception as e:
+                rows.append(data)
+                continue
 
         conn.close()
 except KeyboardInterrupt as k:
