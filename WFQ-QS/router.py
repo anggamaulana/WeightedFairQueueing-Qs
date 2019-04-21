@@ -40,7 +40,7 @@ count = 0
 numpackets=[0.3, 0.3, 0.4]
 sleeptime=[0.05,0.05,0.05]
 daddr=('68.183.235.119',8083)
-daddr = ('localhost',8083)
+# daddr = ('localhost',8083)
 # daddr = None
 globalTime = None
 flag = 0
@@ -222,7 +222,7 @@ def sendpacket():
 					s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 					s2.connect(daddr)
 					print("connect to ", daddr)
-					data += ';'+';'.join([str(i) for i in numpackets])+';'+str(tArrive)+';'+str(tVirtual[min_priority])+';'+str(dump_formula[min_priority])
+					data += ';'+';'.join([str(i) for i in numpackets])+';'+str(tArrive)+';'+str(tVirtual[min_priority])+';'+str(dump_formula[0])+';'+str(dump_formula[1])+';'+str(dump_formula[2])
 					print("data prioritas ",min_priority," dikirim dengan data ", data)
 					s2.send(data)
 					s2.close()
