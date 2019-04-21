@@ -40,7 +40,7 @@ count = 0
 numpackets=[0.3, 0.3, 0.4]
 sleeptime=[0.05,0.05,0.05]
 daddr=('68.183.235.119',8083)
-# daddr = ('localhost',8083)
+daddr = ('localhost',8083)
 # daddr = None
 globalTime = None
 flag = 0
@@ -49,6 +49,7 @@ l_avg_prev = 0
 lambda_bandwidth=100
 
 tVirtual = [0,0,0]
+dump_formula = ['','','']
 MAX_BUFFER = [100,100,100]
 
 
@@ -111,6 +112,7 @@ def sendpacket():
 	while True:
 
 		# PEMBOBOTAN
+		
 		
 		for sourcey in range(3):
 			PacketLength = packet_size[sourcey]
@@ -181,7 +183,7 @@ def sendpacket():
 			weightF = numpackets[sourcey]*lambda_bandwidth
 
 			global tVirtual
-
+			global dump_formula
 			
 
 			
@@ -195,7 +197,7 @@ def sendpacket():
 			fno = max(arrive+TDelay, tVirtual[sourcey]) + (PacketLength * 1.0 / weightF)
 
 			
-
+			dump_formula[sourcey] = 'max(%f+%f, %f) + (%f * 1.0 / %f)' % (arrive,TDelay, tVirtual[sourcey], PacketLength, weightF)
 			tVirtual[sourcey] = fno
 			# source[sourcey]['fno'].append(fno)
 
@@ -220,7 +222,7 @@ def sendpacket():
 					s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 					s2.connect(daddr)
 					print("connect to ", daddr)
-					data += ';'+';'.join([str(i) for i in numpackets])+';'+str(tArrive)+';'+str(tVirtual[min_priority])
+					data += ';'+';'.join([str(i) for i in numpackets])+';'+str(tArrive)+';'+str(tVirtual[min_priority])+';'+str(dump_formula[min_priority])
 					print("data prioritas ",min_priority," dikirim dengan data ", data)
 					s2.send(data)
 					s2.close()
