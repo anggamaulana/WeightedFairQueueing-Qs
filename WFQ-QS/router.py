@@ -210,7 +210,7 @@ def sendpacket():
 					min_priority = i
 			
 			if len(source[min_priority]['time'])>0:
-				source[min_priority]['time'].pop(0)
+				tArrive = source[min_priority]['time'].pop(0)
 			
 			if len(source[min_priority]['data'])>0:
 				data = source[min_priority]['data'].pop(0)
@@ -220,7 +220,7 @@ def sendpacket():
 					s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 					s2.connect(daddr)
 					print("connect to ", daddr)
-					data += ';'+';'.join([str(i) for i in numpackets])+';'
+					data += ';'+';'.join([str(i) for i in numpackets])+';'+str(tArrive)+';'+str(tVirtual[min_priority])
 					print("data prioritas ",min_priority," dikirim dengan data ", data)
 					s2.send(data)
 					s2.close()
