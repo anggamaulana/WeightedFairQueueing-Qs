@@ -31,9 +31,12 @@ try:
                 # dtng = dateutil.parser.parse(st[2])-serverlocaldiff
                 dtng = dateutil.parser.parse(st[2])
                 kirim = datetime.datetime.utcnow()
-
+                st.append(st[2])
                 delay = kirim-dtng
                 st[2] = str(delay.total_seconds())
+                st[6] = float(st[6])
+                st[7] = float(st[7])
+                
                 rows.append(st)
             except Exception as e:
                 rows.append(data)
@@ -41,8 +44,20 @@ try:
 
         conn.close()
 except KeyboardInterrupt as k:
-    print("sedang menyimpan")
-    data = pd.DataFrame(data=rows, columns=['prioritas','data','delay','bobot1','bobot2','bobot3'])
-    data.to_excel("report.xlsx")
-    s.close()
+    print("sedang menyimpan report")
+    # print(rows)
+    try:
+        data = pd.DataFrame(data=rows, columns=['prioritas','data','delay','bobot1','bobot2','bobot3','tArrive','tFinish','waktu datang'])
+
+        arrival_time = data['tArrive'].apply(lambda x: x-data['tArrive'][0])
+        finish_time = data['tFinish'].apply(lambda x: x-data['tArrive'][0])
+
+        data['tFinish'] = finish_time
+        data['tArrive'] = arrival_time
+
+        # print(data.head())
+        data.to_excel("report.xlsx")
+        s.close()
+    except Exception as e:
+        print(e)
     print("done")
