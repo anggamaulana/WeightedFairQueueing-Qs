@@ -209,7 +209,8 @@ def sendpacket():
 					minv = tVirtual[i]
 					min_priority = i
 			
-			source[min_priority]['time'].pop(0)
+			if len(source[min_priority]['time'])>0:
+				source[min_priority]['time'].pop(0)
 			
 			if len(source[min_priority]['data'])>0:
 				data = source[min_priority]['data'].pop(0)
