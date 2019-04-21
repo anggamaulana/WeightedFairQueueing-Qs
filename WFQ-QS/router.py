@@ -185,8 +185,10 @@ def sendpacket():
 			
 
 			
+			if len(source[sourcey]['time'])<=0:
+				continue
 
-			arrive = source[sourcey]['time'].pop(0)
+			arrive = source[sourcey]['time'][0]
 			# fno = min(arrive+TDelay, tVirtual[sourcey]) + (PacketLength * 1.0 / weightF)
 
 			# if sourcey==2:
@@ -206,7 +208,9 @@ def sendpacket():
 				if tVirtual[i]<minv and tVirtual[i]!=0 and len(source[i]['data'])>0:
 					minv = tVirtual[i]
 					min_priority = i
-
+			
+			if len(source[min_priority]['time'])>0:
+				source[min_priority]['time'].pop(0)
 			
 			if len(source[min_priority]['data'])>0:
 				data = source[min_priority]['data'].pop(0)
@@ -216,7 +220,7 @@ def sendpacket():
 					s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 					s2.connect(daddr)
 					print("connect to ", daddr)
-					data += ';'+';'.join([str(i) for i in numpackets])
+					data += ';'+';'.join([str(i) for i in numpackets])+';'
 					print("data prioritas ",min_priority," dikirim dengan data ", data)
 					s2.send(data)
 					s2.close()

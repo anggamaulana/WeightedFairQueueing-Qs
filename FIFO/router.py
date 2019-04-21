@@ -40,7 +40,6 @@ while True:
 			s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 			s2.connect(daddr)
 			print("connect to ", daddr)
-			data += ';'
 			s2.send(data)
 			s2.close()
 		except Exception as e:
@@ -49,5 +48,5 @@ while True:
 		print 'popping'
 	if not data:
 		break
-	time.sleep(0.5)
+	time.sleep(0.05)
 s.close()
