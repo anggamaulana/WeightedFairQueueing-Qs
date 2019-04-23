@@ -32,7 +32,9 @@ print 'Socket bind complete'
 daddr = None
 roundNumber = 0
 activeConn = 0
-source = {0:{'time':[],'data':[], 'fno':[], 'active':0, 'sent':[0]}, 1:{'time':[], 'data':[], 'fno':[], 'active':0, 'sent':[0]}, 2:{'time':[], 'data':[], 'fno':[], 'active':0, 'sent':[0]}}
+source = {0:{'time':[],'data':[], 'fno':[], 'active':0, 'sent':[0]}, 
+		1:{'time':[], 'data':[], 'fno':[], 'active':0, 'sent':[0]}, 
+		2:{'time':[], 'data':[], 'fno':[], 'active':0, 'sent':[0]}}
 packet_size = [100, 100, 100]
 iters = {0:0, 1:0, 2:0}
 count = 0
@@ -211,18 +213,19 @@ def sendpacket():
 					minv = tVirtual[i]
 					min_priority = i
 			
-			if len(source[min_priority]['time'])>0:
-				tArrive = source[min_priority]['time'].pop(0)
+			# if len(source[min_priority]['time'])>0:
+				
 			
 			if len(source[min_priority]['data'])>0:
 				data = source[min_priority]['data'].pop(0)
+				tArrive = source[min_priority]['time'].pop(0)
 				
 				try:
 					# s.sendto(data, daddr)		
 					s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 					s2.connect(daddr)
 					print("connect to ", daddr)
-					data += ';'+';'.join([str(i) for i in numpackets])+';'+str(tArrive)+';'+str(tVirtual[min_priority])+';'+str(dump_formula[0])+';'+str(dump_formula[1])+';'+str(dump_formula[2])
+					data += ';'+';'.join([str(i) for i in numpackets])+';'+str(tArrive)+';'+str(tVirtual[min_priority])+';'+str(dump_formula[0])+';'+str(dump_formula[1])+';'+str(dump_formula[2])+';'+str(source[min_priority]['time'])
 					print("data prioritas ",min_priority," dikirim dengan data ", data)
 					s2.send(data)
 					s2.close()
