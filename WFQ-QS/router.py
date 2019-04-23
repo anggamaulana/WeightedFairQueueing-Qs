@@ -40,7 +40,7 @@ count = 0
 numpackets=[0.3, 0.3, 0.4]
 sleeptime=[0.05,0.05,0.05]
 daddr=('68.183.235.119',8083)
-# daddr = ('localhost',8083)
+daddr = ('localhost',8083)
 # daddr = None
 globalTime = None
 flag = 0
@@ -91,21 +91,21 @@ def recvpacket():
 		source[sourcey]['time'].append(recvTime - globalTime)
 		source[sourcey]['data'].append(str(sourcey) + ';' + data+';'+tm)
 		source[sourcey]['sent'].append(0)
-		roundNumber += ((recvTime - globalTime) - prevTime)*rDash
-		lFno = max(source[sourcey]['fno'])
-		print lFno, roundNumber
-		if lFno > roundNumber:
-			source[sourcey]['active'] = 1
-		else:
-			source[sourcey]['active'] = 0
-		weightsSum = 0
-		for i in xrange(3):
-			if source[i]['active'] == 1:
-				weightsSum += numpackets[i]
-		if weightsSum == 0:
-			continue
-		rDash = 1.0/weightsSum
-		prevTime = recvTime - globalTime
+		# roundNumber += ((recvTime - globalTime) - prevTime)*rDash
+		# lFno = max(source[sourcey]['fno'])
+		# print lFno, roundNumber
+		# if lFno > roundNumber:
+		# 	source[sourcey]['active'] = 1
+		# else:
+		# 	source[sourcey]['active'] = 0
+		# weightsSum = 0
+		# for i in xrange(3):
+		# 	if source[i]['active'] == 1:
+		# 		weightsSum += numpackets[i]
+		# if weightsSum == 0:
+		# 	continue
+		# rDash = 1.0/weightsSum
+		# prevTime = recvTime - globalTime
 	s.close()
 
 def sendpacket():
