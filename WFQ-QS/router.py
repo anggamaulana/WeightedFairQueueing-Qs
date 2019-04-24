@@ -111,11 +111,14 @@ def recvpacket():
 	s.close()
 
 def sendpacket():
+	global l_avg_prev
+	global tVirtual
+	global dump_formula
 	while True:
 
 		# PEMBOBOTAN
 		
-		
+
 		for sourcey in range(3):
 			PacketLength = packet_size[sourcey]
 			if sourcey == 0:
@@ -132,7 +135,7 @@ def sendpacket():
 			else:
 				source[sourcey]['fno'].pop(0)
 
-			global l_avg_prev
+			
 
 			l_avg = (1-f1) * l_avg_prev + f1 * queue_len
 			print("l_avg = (1-%f) * %f + %f * %d: " % (f1,l_avg_prev,f1,queue_len))
@@ -184,22 +187,24 @@ def sendpacket():
 			# print("weigh now",numpackets)
 			weightF = numpackets[sourcey]*lambda_bandwidth
 
-			global tVirtual
-			global dump_formula
+			
 			
 
 			
 			if len(source[sourcey]['time'])<=0:
+				dump_formula[sourcey] = ' '
+				tVirtual[sourcey] = 0
 				continue
 
 			arrive = source[sourcey]['time'][0]
 			# fno = min(arrive+TDelay, tVirtual[sourcey]) + (PacketLength * 1.0 / weightF)
-
+			
 			# if sourcey==2:
 			fno = max(arrive+TDelay, tVirtual[sourcey]) + (PacketLength * 1.0 / weightF)
 
 			
 			dump_formula[sourcey] = 'max(%f+%f, %f) + (%f * 1.0 / %f)' % (arrive,TDelay, tVirtual[sourcey], PacketLength, weightF)
+			# print(dump_formula[sourcey])
 			tVirtual[sourcey] = fno
 			# source[sourcey]['fno'].append(fno)
 
@@ -236,6 +241,7 @@ def sendpacket():
 
 			
 			time.sleep(sleeptime[min_priority])
+			# time.sleep(5)
 
 t1 = threading.Thread(target=recvpacket)
 t1.daemon = True
