@@ -16,7 +16,7 @@ s.listen(1)
 rows = []
 
 # local 1 minutes ahead
-serverlocaldiff=timedelta(minutes=1)
+serverlocaldiff=timedelta(seconds=1)
 
 print ('Connection address:')
 try:
@@ -28,8 +28,8 @@ try:
             try:
                 st = data.split(';')
 
-                # dtng = dateutil.parser.parse(st[2])-serverlocaldiff
-                dtng = dateutil.parser.parse(st[2])
+                dtng = dateutil.parser.parse(st[2])-serverlocaldiff
+                # dtng = dateutil.parser.parse(st[2])
                 kirim = datetime.datetime.utcnow()
                 st.append(st[2])
                 delay = kirim-dtng
