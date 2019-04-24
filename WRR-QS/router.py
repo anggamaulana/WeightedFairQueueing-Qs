@@ -42,13 +42,13 @@ except socket.error, msg:
 print 'Socket bind complete'
 daddr = None
 source = {0: [], 1: [], 2: []}
-packet_size = [105, 175, 143]
+packet_size = [100, 100, 100]
 iters = {0: 0, 1: 0, 2: 0}
 count = 0
-numpackets = [0.6, 0.3, 0.1]
-sleeptime = [0.1, 0.05, 0.1]
-daddr = ('35.229.112.213', 8083)
-# daddr = ('localhost', 8083)
+numpackets = [0.3, 0.3, 0.4]
+sleeptime = [0.05, 0.05, 0.05]
+# daddr = ('68.183.235.119', 8083)
+daddr = ('localhost', 8083)
 
 l_avg_prev = 0
 lambda_bandwidth = 1
@@ -185,7 +185,7 @@ def sendpacket():
 							print("numpacket now",numpackets)
 							print("connect to ", daddr, "and send ", source[j][0])
 							dt = source[j].pop(0)
-							dt += ';'+ ';'.join([str(i) for i in numpackets])
+							dt += ';'+ ';'.join([str(i) for i in numpackets])+';0;0; ; ; ; '
 							s2.send(dt)
 							s2.close()
 						except Exception as e:
