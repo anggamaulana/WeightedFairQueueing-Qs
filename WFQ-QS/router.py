@@ -130,17 +130,15 @@ def sendpacket():
 
 			f1=0.01
 			queue_len = len(source[sourcey]['fno'])
-			if queue_len==0:
-				continue
-			else:
+			if queue_len!=0:
 				source[sourcey]['fno'].pop(0)
 
 			
 
 			l_avg = (1-f1) * l_avg_prev + f1 * queue_len
-			print("l_avg = (1-%f) * %f + %f * %d: " % (f1,l_avg_prev,f1,queue_len))
-			print("nilai l_avg : ", l_avg)
-			print("weight : ", numpackets)
+			# print("l_avg = (1-%f) * %f + %f * %d: " % (f1,l_avg_prev,f1,queue_len))
+			# print("nilai l_avg : ", l_avg)
+			# print("weight : ", numpackets)
 
 			l_avg_prev = l_avg
 				
@@ -153,14 +151,14 @@ def sendpacket():
 				wp=0.3
 				if l_avg<minth1:
 					numpackets[sourcey] = wp
-					print("p0 th1")
+					# print("p0 th1")
 				elif l_avg>minth1 and l_avg<maxth1:
 					numpackets[sourcey] = ((upper-wp)*(l_avg-minth1)*(1.0/(maxth1-minth1)))+wp
 					# numpackets[sourcey] = ((0.3/(maxth1-minth1))*(abs(l_avg-l_avg_prev))+numpackets[sourcey])
-					print("p0 th2")
+					# print("p0 th2")
 				elif l_avg>=maxth1:
 					numpackets[sourcey] = upper
-					print("p0 th3")
+					# print("p0 th3")
 
 			elif sourcey==1:
 				# antrian prioritas  w1
@@ -168,16 +166,16 @@ def sendpacket():
 				minth2 = 50
 				if l_avg < minth2:
 					numpackets[sourcey] = med_init
-					print("p1 th1")
+					# print("p1 th1")
 				elif l_avg >= minth2:
 					numpackets[sourcey] = 1-numpackets[0]
-					print("p1 th2")
+					# print("p1 th2")
 				
 
 			elif sourcey==2:
 				# antrian prioritas w3
 				numpackets[sourcey] = 1-(numpackets[0]+numpackets[1])
-				print("p2 th1")
+				# print("p2 th1")
 
 			
 			if numpackets[sourcey]==0:
