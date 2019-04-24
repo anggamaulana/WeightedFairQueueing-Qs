@@ -42,13 +42,13 @@ count = 0
 numpackets=[0.3, 0.3, 0.4]
 sleeptime=[0.05,0.05,0.05]
 daddr=('68.183.235.119',8083)
-# daddr = ('localhost',8083)
+daddr = ('localhost',8083)
 # daddr = None
 globalTime = None
 flag = 0
 rDash = 0
 l_avg_prev = 0
-lambda_bandwidth=100
+lambda_bandwidth=1
 
 tVirtual = [0,0,0]
 dump_formula = ['','','']
