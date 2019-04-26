@@ -5,6 +5,7 @@ import threading
 import pytz
 import datetime
 from fractions import gcd
+import pandas as pd
 
 
 HOST = '0.0.0.0'
@@ -56,7 +57,7 @@ lambda_bandwidth = 1
 
 tVirtual = [0, 0, 0]
 flag=0
-
+fifo_packet=[]
 
 def recvpacket():
     global source
@@ -90,6 +91,7 @@ def recvpacket():
             # print(recvTime - globalTime)
             tme = str(recvTime - globalTime)
             source[int(sourcey)].append(str(sourcey) + ';' + data + ';' + tm)
+            fifo_packet.append([sourcey, data])
             t_arrive[int(sourcey)].append(tme)
             # print(source)
     s.close()
@@ -210,5 +212,14 @@ t2.daemon = True
 t1.start()
 t2.start()
 
-while threading.active_count() > 0:
-    time.sleep(0.1)
+try:
+	while threading.active_count() > 0:
+		time.sleep(0.1)
+except KeyboardInterrupt as k:
+    print("sedang menyimpan report")
+    try:
+        dt = pd.DataFrame(data=fifo_packet,columns=['prioritas','data'])
+        dt.to_excel('fifo_packet_wrr.xlsx')
+    except Exception as e:
+        print(e)
+    print("done")
