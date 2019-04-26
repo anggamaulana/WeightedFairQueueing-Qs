@@ -42,6 +42,7 @@ except socket.error, msg:
 print 'Socket bind complete'
 daddr = None
 source = {0: [], 1: [], 2: []}
+t_arrive = {0: [], 1: [], 2: []}
 packet_size = [100, 100, 100]
 iters = {0: 0, 1: 0, 2: 0}
 count = 0
@@ -54,12 +55,14 @@ l_avg_prev = 0
 lambda_bandwidth = 1
 
 tVirtual = [0, 0, 0]
-
+flag=0
 
 
 def recvpacket():
     global source
     global daddr
+    global flag
+    global t_arrive
     while True:
         d = s.recvfrom(1024)
         sourcey, data = d[0].split(';')
@@ -69,8 +72,9 @@ def recvpacket():
         # print datap
         sourcey = int(sourcey)
 
-        if len(source[sourcey]) == 0:
+        if flag == 0:
             globalTime = recvTime
+            flag=1
             
         else:
             # DROP PACKET IF BUFFER FULL
@@ -86,6 +90,7 @@ def recvpacket():
             # print(recvTime - globalTime)
             tme = str(recvTime - globalTime)
             source[int(sourcey)].append(str(sourcey) + ';' + data + ';' + tm)
+            t_arrive[int(sourcey)].append(tme)
             # print(source)
     s.close()
 
@@ -185,7 +190,7 @@ def sendpacket():
 							print("numpacket now",numpackets)
 							print("connect to ", daddr, "and send ", source[j][0])
 							dt = source[j].pop(0)
-							dt += ';'+ ';'.join([str(i) for i in numpackets])+';0;0; ; ; ; '
+							dt += ';'+ ';'.join([str(i) for i in numpackets])+';0;0;'+str(t_arrive[j].pop(0))+'; ;'+str(numpackets_simplified)+';'+str([len(source[0]),len(source[1]),len(source[2])])+'; ; ; ; '
 							s2.send(dt)
 							s2.close()
 						except Exception as e:

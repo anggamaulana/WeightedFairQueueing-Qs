@@ -47,7 +47,7 @@ except KeyboardInterrupt as k:
     print("sedang menyimpan report")
     # print(rows)
     try:
-        data = pd.DataFrame(data=rows, columns=['prioritas','data','delay','bobot1','bobot2','bobot3','tArrive','tFinish','formula p1','formula p2','formula p3','antrian','waktu datang'])
+        data = pd.DataFrame(data=rows, columns=['prioritas','data','delay','bobot1','bobot2','bobot3','tArrive','tFinish','tarrive (waktu tiba di router)','treceive (waktu sampai di cloud)','bobot / bobot minimal','jumlah isi buffer','formula p1','formula p2','formula p3','antrian','waktu datang'])
 
         arrival_time = data['tArrive'].apply(lambda x: x-data['tArrive'][0])
         finish_time = data['tFinish'].apply(lambda x: x-data['tArrive'][0])
