@@ -48,8 +48,8 @@ iters = {0: 0, 1: 0, 2: 0}
 count = 0
 numpackets = [0.3, 0.3, 0.4]
 sleeptime = [0.05, 0.05, 0.05]
-# daddr = ('68.183.235.119', 8083)
-daddr = ('localhost', 8083)
+daddr = ('68.183.235.119', 8083)
+# daddr = ('localhost', 8083)
 
 l_avg_prev = 0
 lambda_bandwidth = 1
@@ -179,26 +179,26 @@ def sendpacket():
 
 				for i in range(int(numpackets_simplified[j])):
 					
-					if len(source[j]) == 0:
-						continue
-					else:
+					# if len(source[j]) == 0:
+					# 	continue
+					# else:
 						# s.sendto(source[j][0], daddr)
-						try:
-							# s.sendto(data, daddr)
-							s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-							s2.connect(daddr)
-							print("numpacket now",numpackets)
-							print("connect to ", daddr, "and send ", source[j][0])
-							dt = source[j].pop(0)
-							dt += ';'+ ';'.join([str(i) for i in numpackets])+';0;0;'+str(t_arrive[j].pop(0))+'; ;'+str(numpackets_simplified)+';'+str([len(source[0]),len(source[1]),len(source[2])])+'; ; ; ; '
-							s2.send(dt)
-							s2.close()
-						except Exception as e:
-							print(e)
+					try:
+						# s.sendto(data, daddr)
+						s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+						s2.connect(daddr)
+						print("numpacket now",numpackets)
+						print("connect to ", daddr, "and send ", source[j][0])
+						dt = source[j].pop(0)
+						dt += ';'+ ';'.join([str(i) for i in numpackets])+';0;0;'+str(t_arrive[j].pop(0))+'; ;'+str(numpackets_simplified)+';'+str([len(source[0]),len(source[1]),len(source[2])])+'; ; ; ; '
+						s2.send(dt)
+						s2.close()
+					except Exception as e:
+						print(e)
 
-						num[j] += 1
-						# del source[j][0]
-						time.sleep(sleeptime[j])
+					num[j] += 1
+					# del source[j][0]
+					time.sleep(sleeptime[j])
 #			print num
 		
 
