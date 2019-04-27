@@ -48,7 +48,7 @@ packet_size = [100, 100, 100]
 iters = {0: 0, 1: 0, 2: 0}
 count = 0
 numpackets = [0.3, 0.3, 0.4]
-sleeptime = [0.05, 0.05, 0.05]
+sleeptime = [0.1, 0.1, 0.05]
 daddr = ('68.183.235.119', 8083)
 # daddr = ('localhost', 8083)
 
@@ -158,8 +158,8 @@ def sendpacket():
 				numpackets[sourcey] = 1-(numpackets[0]+numpackets[1])
 				print("p2 th1")
 
-			if numpackets[sourcey] == 0:
-				numpackets[sourcey] = 0.0001
+			# if numpackets[sourcey] == 0:
+			# 	numpackets[sourcey] = 0.0001
 
 			# print("weigh now",numpackets)
 			# weightF = numpackets[sourcey]*lambda_bandwidth
