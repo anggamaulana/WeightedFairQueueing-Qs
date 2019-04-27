@@ -105,7 +105,7 @@ def sendpacket():
 	while True:
 
         # PEMBOBOTAN
-
+		l_avg_dump = [0,0,0]
 		for sourcey in range(3):
 			PacketLength = packet_size[sourcey]
 			
@@ -122,7 +122,7 @@ def sendpacket():
 			# 		(f1, l_avg_prev, f1, queue_len))
 			# print("nilai l_avg : ", l_avg)
 			# print("weight : ", numpackets)
-
+			l_avg_dump[sourcey]=l_avg
 			l_avg_prev = l_avg
 
 			if sourcey == 0:
@@ -192,7 +192,7 @@ def sendpacket():
 						print("numpacket now",numpackets)
 						print("connect to ", daddr, "and send ", source[j][0])
 						dt = source[j].pop(0)
-						dt += ';'+ ';'.join([str(i) for i in numpackets])+';0;0;'+str(t_arrive[j].pop(0))+'; ;'+str(numpackets_simplified)+';'+str([len(source[0]),len(source[1]),len(source[2])])+'; ; ; ; '
+						dt += ';'+ ';'.join([str(i) for i in numpackets])+';0;0;'+str(t_arrive[j].pop(0))+'; ;'+str(numpackets_simplified)+';'+str([len(source[0]),len(source[1]),len(source[2])])+';'+str(l_avg_dump)+'; ; ; ; '
 						s2.send(dt)
 						s2.close()
 					except Exception as e:

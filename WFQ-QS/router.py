@@ -118,7 +118,7 @@ def sendpacket():
 
 		# PEMBOBOTAN
 		
-
+		l_avg_dump = [0,0,0]
 		for sourcey in range(3):
 			PacketLength = packet_size[sourcey]
 			if sourcey == 0:
@@ -139,7 +139,7 @@ def sendpacket():
 			# print("l_avg = (1-%f) * %f + %f * %d: " % (f1,l_avg_prev,f1,queue_len))
 			# print("nilai l_avg : ", l_avg)
 			# print("weight : ", numpackets)
-
+			l_avg_dump[sourcey]=l_avg
 			l_avg_prev = l_avg
 				
 
@@ -228,7 +228,7 @@ def sendpacket():
 					s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 					s2.connect(daddr)
 					print("connect to ", daddr)
-					data += ';'+';'.join([str(i) for i in numpackets])+';'+str(tArrive)+';'+str(tVirtual[min_priority])+'; ; ; ;'+str([len(source[0]['data']), len(source[1]['data']),len(source[2]['data'])])+';'+str(dump_formula[0])+';'+str(dump_formula[1])+';'+str(dump_formula[2])+';'+str(source[min_priority]['time'])
+					data += ';'+';'.join([str(i) for i in numpackets])+';'+str(tArrive)+';'+str(tVirtual[min_priority])+'; ; ; ;'+str([len(source[0]['data']), len(source[1]['data']),len(source[2]['data'])])+';'+str(l_avg_dump)+';'+str(dump_formula[0])+';'+str(dump_formula[1])+';'+str(dump_formula[2])+';'+str(source[min_priority]['time'])
 					print("data prioritas ",min_priority," dikirim dengan data ", data)
 					s2.send(data)
 					s2.close()
