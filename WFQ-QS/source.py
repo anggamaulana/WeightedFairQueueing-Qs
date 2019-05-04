@@ -11,7 +11,7 @@ except socket.error:
 
 host = 'localhost'
 port = 8888
-packet_count = [300, 300, 300]
+packet_count = [1000, 1000, 1000]
 packet_interval = [0.200, 0.25, 0.300]
 packet_size = [100, 50, 100]
 i = int(sys.argv[1])

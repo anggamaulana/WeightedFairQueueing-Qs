@@ -42,7 +42,7 @@ count = 0
 numpackets=[0.3, 0.3, 0.4]
 sleeptime=[0.05,0.05,0.05]
 daddr=('68.183.235.119',8083)
-daddr = ('localhost',8083)
+# daddr = ('localhost',8083)
 # daddr = None
 globalTime = None
 flag = 0
@@ -79,7 +79,7 @@ def recvpacket():
 			flag = 1
 
 		# DROP PACKET IF BUFFER FULL
-		if len(source[sourcey]['fno']) == MAX_BUFFER[sourcey]:
+		if len(source[sourcey]['data']) == MAX_BUFFER[sourcey]:
 			print("DROP PACKET")
 			continue
 
@@ -129,7 +129,7 @@ def sendpacket():
 				TDelay = 0.1
 
 			f1=0.01
-			queue_len = len(source[sourcey]['fno'])
+			queue_len = len(source[sourcey]['data'])
 			if queue_len!=0:
 				source[sourcey]['fno'].pop(0)
 

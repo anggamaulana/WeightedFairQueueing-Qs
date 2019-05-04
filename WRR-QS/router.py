@@ -48,7 +48,7 @@ packet_size = [100, 100, 100]
 iters = {0: 0, 1: 0, 2: 0}
 count = 0
 numpackets = [0.3, 0.3, 0.4]
-sleeptime = [0.1, 0.1, 0.05]
+sleeptime = [0.2, 0.1, 0.05]
 daddr = ('68.183.235.119', 8083)
 # daddr = ('localhost', 8083)
 
