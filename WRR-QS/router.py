@@ -50,7 +50,7 @@ count = 0
 numpackets = [0.3, 0.3, 0.4]
 sleeptime = [0.2, 0.1, 0.05]
 daddr = ('68.183.235.119', 8083)
-# daddr = ('localhost', 8083)
+daddr = ('localhost', 8083)
 
 l_avg_prev = 0
 lambda_bandwidth = 1
@@ -192,7 +192,7 @@ def sendpacket():
 						print("numpacket now",numpackets)
 						print("connect to ", daddr, "and send ", source[j][0])
 						dt = source[j].pop(0)
-						dt += ';'+ ';'.join([str(i) for i in numpackets])+';0;0;'+str(t_arrive[j].pop(0))+'; ;'+str(numpackets_simplified)+';'+str([len(source[0]),len(source[1]),len(source[2])])+';'+str(l_avg_dump)+'; ; ; ; '
+						dt += ';'+ ';'.join([str(i) for i in numpackets])+';0;0;'+str(t_arrive[j].pop(0))+'; ;'+str(numpackets_simplified)+';'+str([len(source[0]),len(source[1]),len(source[2])])+';'+str(l_avg_dump)+'; ; ; ; ; ; ; '
 						s2.send(dt)
 						s2.close()
 					except Exception as e:

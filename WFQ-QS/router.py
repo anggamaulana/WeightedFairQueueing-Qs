@@ -42,16 +42,17 @@ count = 0
 numpackets=[0.3, 0.3, 0.4]
 sleeptime=[0.05,0.05,0.05]
 daddr=('68.183.235.119',8083)
-# daddr = ('localhost',8083)
+daddr = ('localhost',8083)
 # daddr = None
 globalTime = None
 flag = 0
 rDash = 0
-l_avg_prev = 0
+l_avg_prev =[0,0,0]
 lambda_bandwidth=100
 
 tVirtual = [0,0,0]
 dump_formula = ['','','']
+dump_formula_lavg = ['','','']
 MAX_BUFFER = [100,100,100]
 
 
@@ -130,17 +131,17 @@ def sendpacket():
 
 			f1=0.01
 			queue_len = len(source[sourcey]['data'])
-			if queue_len!=0:
-				source[sourcey]['fno'].pop(0)
+			# if queue_len!=0:
+			# 	source[sourcey]['fno'].pop(0)
 
 			
 
-			l_avg = (1-f1) * l_avg_prev + f1 * queue_len
-			# print("l_avg = (1-%f) * %f + %f * %d: " % (f1,l_avg_prev,f1,queue_len))
+			l_avg = (1-f1) * l_avg_prev[sourcey] + f1 * queue_len
+			dump_formula_lavg[sourcey]= "l_avg = (1-%f) * %f + %f * %d: " % (f1,l_avg_prev[sourcey],f1,queue_len)
 			# print("nilai l_avg : ", l_avg)
 			# print("weight : ", numpackets)
 			l_avg_dump[sourcey]=l_avg
-			l_avg_prev = l_avg
+			l_avg_prev[sourcey] = l_avg
 				
 
 			if sourcey==0:
@@ -228,7 +229,7 @@ def sendpacket():
 					s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 					s2.connect(daddr)
 					print("connect to ", daddr)
-					data += ';'+';'.join([str(i) for i in numpackets])+';'+str(tArrive)+';'+str(tVirtual[min_priority])+'; ; ; ;'+str([len(source[0]['data']), len(source[1]['data']),len(source[2]['data'])])+';'+str(l_avg_dump)+';'+str(dump_formula[0])+';'+str(dump_formula[1])+';'+str(dump_formula[2])+';'+str(source[min_priority]['time'])
+					data += ';'+';'.join([str(i) for i in numpackets])+';'+str(tArrive)+';'+str(tVirtual[min_priority])+'; ; ; ;'+str([len(source[0]['data']), len(source[1]['data']),len(source[2]['data'])])+';'+str(l_avg_dump)+';'+str(dump_formula[0])+';'+str(dump_formula[1])+';'+str(dump_formula[2])+';'+str(source[min_priority]['time'])+";"+";".join(dump_formula_lavg)
 					print("data prioritas ",min_priority," dikirim dengan data ", data)
 					s2.send(data)
 					s2.close()
