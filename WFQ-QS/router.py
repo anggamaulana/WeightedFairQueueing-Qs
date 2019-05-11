@@ -51,8 +51,11 @@ l_avg_prev =[0,0,0]
 lambda_bandwidth=100
 
 tVirtual = [0,0,0]
+tVirtualArrive = [0,0,0]
+arrivePrev = [0,0,0]
 dump_formula = ['','','']
 dump_formula_lavg = ['','','']
+dump_formula_vt = ['','','']
 MAX_BUFFER = [100,100,100]
 
 
@@ -115,6 +118,7 @@ def sendpacket():
 	global l_avg_prev
 	global tVirtual
 	global dump_formula
+	global arrivePrev
 	while True:
 
 		# PEMBOBOTAN
@@ -193,13 +197,20 @@ def sendpacket():
 			if len(source[sourcey]['time'])<=0:
 				dump_formula[sourcey] = ' '
 				tVirtual[sourcey] = 0
+				
 				continue
 
 			arrive = source[sourcey]['time'][0]
+			Vt = tVirtualArrive[sourcey] + arrive - arrivePrev[sourcey]
+
+			dump_formula_vt[sourcey] = '%f + %f - %f = %f' % (tVirtualArrive[sourcey], arrive, arrivePrev[sourcey], Vt)
+
+			arrivePrev[sourcey] = arrive
+			tVirtualArrive[sourcey] = Vt
 			# fno = min(arrive+TDelay, tVirtual[sourcey]) + (PacketLength * 1.0 / weightF)
 			
 			# if sourcey==2:
-			fno = max(arrive+TDelay, tVirtual[sourcey]) + (PacketLength * 1.0 / weightF)
+			fno = max( Vt + TDelay, tVirtual[sourcey]) + (PacketLength * 1.0 / weightF)
 
 			
 			dump_formula[sourcey] = 'max(%f+%f, %f) + (%f * 1.0 / %f)' % (arrive,TDelay, tVirtual[sourcey], PacketLength, weightF)
@@ -229,7 +240,7 @@ def sendpacket():
 					s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 					s2.connect(daddr)
 					print("connect to ", daddr)
-					data += ';'+';'.join([str(i) for i in numpackets])+';'+str(tArrive)+';'+str(tVirtual[min_priority])+'; ; ; ;'+str([len(source[0]['data']), len(source[1]['data']),len(source[2]['data'])])+';'+str(l_avg_dump)+';'+str(dump_formula[0])+';'+str(dump_formula[1])+';'+str(dump_formula[2])+';'+str(source[min_priority]['time'])+";"+";".join(dump_formula_lavg)
+					data += ';'+';'.join([str(i) for i in numpackets])+';'+str(tArrive)+';'+str(tVirtual[min_priority])+'; ; ; ;'+str([len(source[0]['data']), len(source[1]['data']),len(source[2]['data'])])+';'+str(l_avg_dump)+';'+str(dump_formula[0])+';'+str(dump_formula[1])+';'+str(dump_formula[2])+';'+str(source[min_priority]['time'])+";"+";".join(dump_formula_lavg)+";"+";".join(dump_formula_vt)
 					print("data prioritas ",min_priority," dikirim dengan data ", data)
 					s2.send(data)
 					s2.close()
