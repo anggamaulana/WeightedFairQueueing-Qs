@@ -48,9 +48,9 @@ packet_size = [100, 100, 100]
 iters = {0: 0, 1: 0, 2: 0}
 count = 0
 numpackets = [0.3, 0.3, 0.4]
-sleeptime = [0.2, 0.1, 0.05]
+sleeptime = [0.05, 0.05, 0.05]
 daddr = ('68.183.235.119', 8083)
-daddr = ('localhost', 8083)
+# daddr = ('localhost', 8083)
 
 l_avg_prev = 0
 lambda_bandwidth = 1
@@ -127,8 +127,8 @@ def sendpacket():
 
 			if sourcey == 0:
 				# antrian prioritas tinggi w1
-				minth1=25
-				maxth1=50
+				minth1=0.833
+				maxth1=3.667
 				upper=0.7
 				wp=0.3
 				if l_avg < minth1:
