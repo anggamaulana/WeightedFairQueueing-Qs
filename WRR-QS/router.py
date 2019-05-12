@@ -127,8 +127,8 @@ def sendpacket():
 
 			if sourcey == 0:
 				# antrian prioritas tinggi w1
-				minth1=0.833
-				maxth1=3.667
+				minth1=25
+				maxth1=50
 				upper=0.7
 				wp=0.3
 				if l_avg < minth1:
