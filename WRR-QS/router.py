@@ -171,22 +171,51 @@ def sendpacket():
 
 			# Pembulatan bobot
 			numpackets_simplified = reduce_ratio(numpackets)
-			# print("numpacket now",numpackets, "reduce", numpackets_reduce)
 			
-			for j in range(3):
+			
+			# for j in range(3):
 				
-				if len(source[j])<=0:
-					# when buffer empty continue to other buffer
-					continue
+			# 	if len(source[j])<=0:
+			# 		# when buffer empty continue to other buffer
+			# 		continue
 
-				for i in range(int(numpackets_simplified[j])):
+			# 	for i in range(int(numpackets_simplified[j])):
 					
-					# if len(source[j]) == 0:
-					# 	continue
-					# else:
-						# s.sendto(source[j][0], daddr)
+					
+			# 		try:
+			# 			s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			# 			s2.connect(daddr)
+			# 			print("numpacket now",numpackets)
+			# 			print("connect to ", daddr, "and send ", source[j][0])
+			# 			dt = source[j].pop(0)
+			# 			dt += ';'+ ';'.join([str(i) for i in numpackets])+';0;0;'+str(t_arrive[j].pop(0))+'; ;'+str(numpackets_simplified)+';'+str([len(source[0]),len(source[1]),len(source[2])])+';'+str(l_avg_dump)+'; ; ; ; ; ; ; ; ; ; '
+			# 			s2.send(dt)
+			# 			s2.close()
+			# 		except Exception as e:
+			# 			print(e)
+
+			# 		num[j] += 1
+					
+			# 		time.sleep(sleeptime[j])
+
+			# METODE BARU===================================
+			while True:
+
+				if numpackets_simplified[0]<=0 and numpackets_simplified[1]<=0 and numpackets_simplified[2]<=0:
+					print("ronde selesai")
+					break
+
+				for j in range(3):
+					
+					if len(source[j])<=0:
+						# when buffer empty continue to other buffer
+						continue
+
+					if numpackets_simplified[j]<=0:
+						continue
+						
+						
 					try:
-						# s.sendto(data, daddr)
 						s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 						s2.connect(daddr)
 						print("numpacket now",numpackets)
@@ -199,9 +228,13 @@ def sendpacket():
 						print(e)
 
 					num[j] += 1
-					# del source[j][0]
+
+					numpackets_simplified[j]-=numpackets_simplified[j]
+					
 					time.sleep(sleeptime[j])
-#			print num
+
+
+#			
 		
 
 
