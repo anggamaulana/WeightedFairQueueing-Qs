@@ -200,11 +200,12 @@ def sendpacket():
 			# 		time.sleep(sleeptime[j])
 
 			# METODE BARU===================================
-			while True:
+			
+			for k in range(sum(numpackets_simplified)):
 
-				if numpackets_simplified[0]<=0 and numpackets_simplified[1]<=0 and numpackets_simplified[2]<=0:
-					print("ronde selesai")
-					break
+				# if numpackets_simplified[0]<=0 and numpackets_simplified[1]<=0 and numpackets_simplified[2]<=0:
+				# 	print("ronde selesai")
+				# 	break
 
 				for j in range(3):
 					
@@ -230,7 +231,7 @@ def sendpacket():
 
 					num[j] += 1
 
-					numpackets_simplified[j]-=numpackets_simplified[j]
+					numpackets_simplified[j]=numpackets_simplified[j]-1
 					
 					time.sleep(sleeptime[j])
 
