@@ -100,6 +100,7 @@ def recvpacket():
 def sendpacket():
 	num = [0, 0, 0]
 	global numpackets
+	global l_avg_prev
 	print("sending packet")
 
 	while True:
@@ -115,7 +116,7 @@ def sendpacket():
 				continue
 			
 
-			global l_avg_prev
+			
 
 			l_avg = (1-f1) * l_avg_prev + f1 * queue_len
 			# print("l_avg = (1-%f) * %f + %f * %d: " %
