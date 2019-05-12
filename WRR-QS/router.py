@@ -172,7 +172,7 @@ def sendpacket():
 			# Pembulatan bobot
 			numpackets_simplified = reduce_ratio(numpackets)
 			
-			
+			# METODE LAMA===================================
 			# for j in range(3):
 				
 			# 	if len(source[j])<=0:
