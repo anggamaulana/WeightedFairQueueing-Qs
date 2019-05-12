@@ -232,6 +232,9 @@ def sendpacket():
 				
 			
 			if len(source[min_priority]['data'])>0:
+				buffer1 = len(source[0]['data'])
+				buffer2 = len(source[1]['data'])
+				buffer3 = len(source[2]['data'])
 				data = source[min_priority]['data'].pop(0)
 				tArrive = source[min_priority]['time'].pop(0)
 				
@@ -240,7 +243,7 @@ def sendpacket():
 					s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 					s2.connect(daddr)
 					print("connect to ", daddr)
-					data += ';'+';'.join([str(i) for i in numpackets])+';'+str(tArrive)+';'+str(tVirtual[min_priority])+'; ; ; ;'+str([len(source[0]['data']), len(source[1]['data']),len(source[2]['data'])])+';'+str(l_avg_dump)+';'+str(dump_formula[0])+';'+str(dump_formula[1])+';'+str(dump_formula[2])+';'+str(source[min_priority]['time'])+";"+";".join(dump_formula_lavg)+";"+";".join(dump_formula_vt)
+					data += ';'+';'.join([str(i) for i in numpackets])+';'+str(tArrive)+';'+str(tVirtual[min_priority])+'; ; ; ;'+str([buffer1, buffer2, buffer3])+';'+str(l_avg_dump)+';'+str(dump_formula[0])+';'+str(dump_formula[1])+';'+str(dump_formula[2])+';'+str(source[min_priority]['time'])+";"+";".join(dump_formula_lavg)+";"+";".join(dump_formula_vt)
 					print("data prioritas ",min_priority," dikirim dengan data ", data)
 					s2.send(data)
 					s2.close()
