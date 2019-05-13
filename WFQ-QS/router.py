@@ -9,18 +9,18 @@ HOST = '0.0.0.0'
 PORT = 8888
 
 
-
+#ambil milisecond sekarang
 current_milli_time = lambda: int(round(time.time() * 1000))
 
 try:
-	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # buka socket untuk penerima paket
 	print 'Socket created'
 except socket.error, msg:
 	print 'Failed to create socket. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
 	sys.exit()
 
 try:
-	s.bind((HOST, PORT))
+	s.bind((HOST, PORT)) # bind socket ke port tertentu
 except socket.error , msg:
 	print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
 	sys.exit()
@@ -60,23 +60,24 @@ MAX_BUFFER = [100,100,100]
 
 
 def recvpacket():
+	# definisi variabel global
 	global source
 	global flag
 	global rDash
 	while True:
-		d = s.recvfrom(1024)
-		recvTime = current_milli_time()
-		sourcey, data = d[0].split(';')
+		d = s.recvfrom(1024) # ambil data dari socket network
+		recvTime = current_milli_time() # ambil milisecond sekarang
+		sourcey, data = d[0].split(';') # split data berdasarkan karakter ; sehingga menjadi array
 		
-		tm = datetime.datetime.utcnow().isoformat()
-		sourcey = int(sourcey)
+		tm = datetime.datetime.utcnow().isoformat() # ambil waktu utc
+		sourcey = int(sourcey) # ambil data prioritas
 		
-		if data == "dest":
+		if data == "dest": # jika ping berasal dari cloud, tidak dipakai
 			global daddr
 			daddr= d[1]
 			s.sendto("connected", daddr)
 			continue
-		if flag == 0:
+		if flag == 0: # jika ping merupakan paket pertama
 			prevTime = 0
 			globalTime = recvTime
 			roundNumber = 0
@@ -89,14 +90,14 @@ def recvpacket():
 
 		if len(source[sourcey]['fno']) == 0:
 			print 'First packet'
-			fno = roundNumber + (packet_size[sourcey]*1.0/numpackets[sourcey])
+			fno = roundNumber + (packet_size[sourcey]*1.0/numpackets[sourcey]) #tidak dipakai karena dihitung diujung
 			source[sourcey]['fno'].append(fno)
 		else:
 			print 'length', len(source[sourcey]['fno']), 'source', sourcey
 
-		source[sourcey]['time'].append(recvTime - globalTime)
-		source[sourcey]['data'].append(str(sourcey) + ';' + data+';'+tm)
-		source[sourcey]['sent'].append(0)
+		source[sourcey]['time'].append(recvTime - globalTime) #masukkan antrian data ke array time 
+		source[sourcey]['data'].append(str(sourcey) + ';' + data+';'+tm)  #masukkan antrian data ke array data
+		source[sourcey]['sent'].append(0)  #tidak dipakai
 		# roundNumber += ((recvTime - globalTime) - prevTime)*rDash
 		# lFno = max(source[sourcey]['fno'])
 		# print lFno, roundNumber
@@ -230,25 +231,25 @@ def sendpacket():
 			
 			# if len(source[min_priority]['time'])>0:
 				
-			
+			# jika ada data di antrian
 			if len(source[min_priority]['data'])>0:
-				buffer1 = len(source[0]['data'])
-				buffer2 = len(source[1]['data'])
-				buffer3 = len(source[2]['data'])
-				data = source[min_priority]['data'].pop(0)
-				tArrive = source[min_priority]['time'].pop(0)
+				buffer1 = len(source[0]['data']) #cek buffer utk dimasukkan ke excel
+				buffer2 = len(source[1]['data']) #cek buffer utk dimasukkan ke excel
+				buffer3 = len(source[2]['data']) #cek buffer utk dimasukkan ke excel
+				data = source[min_priority]['data'].pop(0) #ambil data diujung antrian
+				tArrive = source[min_priority]['time'].pop(0) #ambil data diujung antrian
 				
 				try:
 					# s.sendto(data, daddr)		
-					s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-					s2.connect(daddr)
+					s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # buka koneksi dengan cloud
+					s2.connect(daddr) # lakukan koneksi dengan cloud
 					print("connect to ", daddr)
 					data += ';'+';'.join([str(i) for i in numpackets])+';'+str(tArrive)+';'+str(tVirtual[min_priority])+'; ; ; ;'+str([buffer1, buffer2, buffer3])+';'+str(l_avg_dump)+';'+str(dump_formula[0])+';'+str(dump_formula[1])+';'+str(dump_formula[2])+';'+str(source[min_priority]['time'])+";"+";".join(dump_formula_lavg)+";"+";".join(dump_formula_vt)
 					print("data prioritas ",min_priority," dikirim dengan data ", data)
-					s2.send(data)
-					s2.close()
+					s2.send(data) # kirim data ke cloud
+					s2.close() # tutup koneksi dengan cloud
 				except Exception as e:
-					print(e)
+					print(e) #jika ada error print
 			
 			
 
@@ -257,12 +258,12 @@ def sendpacket():
 			# time.sleep(5)
 
 t1 = threading.Thread(target=recvpacket)
-t1.daemon = True
+t1.daemon = True # masukan thread ke daemon
 t2 = threading.Thread(target=sendpacket)
-t2.daemon = True
+t2.daemon = True # masukan thread ke daemon
 
-t1.start()
-t2.start()
+t1.start() # mulai thread penerima paket
+t2.start()# mulai thread pengirim paket
 
-while threading.active_count() > 0:
-    time.sleep(0.1)
+while threading.active_count() > 0: # dilakukan supaya program utama tidak mati, karena ke2 thread menjadi daemon
+    time.sleep(0.1) 
