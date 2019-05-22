@@ -244,7 +244,19 @@ def sendpacket():
 					s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # buka koneksi dengan cloud
 					s2.connect(daddr) # lakukan koneksi dengan cloud
 					print("connect to ", daddr)
-					data += ';'+';'.join([str(i) for i in numpackets])+';'+str(tArrive)+';'+str(tVirtual[min_priority])+'; ; ; ;'+str([buffer1, buffer2, buffer3])+';'+str(l_avg_dump)+';'+str(dump_formula[0])+';'+str(dump_formula[1])+';'+str(dump_formula[2])+';'+str(source[min_priority]['time'])+";"+";".join(dump_formula_lavg)+";"+";".join(dump_formula_vt)
+					
+					
+					# VERSI komplit
+					# data += ';'+';'.join([str(i) for i in numpackets])+';'+str(tArrive)+';'+str(tVirtual[min_priority])+'; ; ; ;'+str([buffer1, buffer2, buffer3])+';'+str(l_avg_dump)+';'+str(dump_formula[0])+';'+str(dump_formula[1])+';'+str(dump_formula[2])+';'+str(source[min_priority]['time'])+";"+";".join(dump_formula_lavg)+";"+";".join(dump_formula_vt)
+
+					# VERSI 1
+					# Nomor, prioritas, data, delay, bobot123, tarrive, tfinish, jumlah isi buffer, lavg, waktu datang.
+					# data += ';'+';'.join([str(i) for i in numpackets])+';'+str(tArrive)+';'+str(tVirtual[min_priority])+'; ; ; ;'+str([buffer1, buffer2, buffer3])+';'+str(l_avg_dump)+'; ; ; ; ; ; ; ; ; ; '
+
+					# VERSI 2
+					# Isi nya nomor, prioritas, data, delay, bobot123, tarrive, jumlah isi buffer, waktu datang
+					data += ';'+';'.join([str(i) for i in numpackets])+';'+str(tArrive)+'; ; ; ; ;'+str([buffer1, buffer2, buffer3])+'; ; ; ; ; ; ; ; ; ; ; '
+
 					print("data prioritas ",min_priority," dikirim dengan data ", data)
 					s2.send(data) # kirim data ke cloud
 					s2.close() # tutup koneksi dengan cloud

@@ -34,11 +34,15 @@ try:
                 st.append(st[2])
                 delay = kirim-dtng
                 st[2] = str(delay.total_seconds())
-                st[6] = float(st[6])
-                st[7] = float(st[7])
+                if st[6]!=" ":
+                    st[6] = float(st[6])
+                
+                if st[7]!=" ":
+                    st[7] = float(st[7])
                 
                 rows.append(st) #masukkan ke array row untuk laporan ke excel
             except Exception as e:
+                # print("error append data")
                 rows.append(data)
                 continue
 
@@ -50,8 +54,14 @@ except KeyboardInterrupt as k:
         data = pd.DataFrame(data=rows, columns=['prioritas','data','delay','bobot1','bobot2','bobot3','tArrive','tFinish','tarrive (waktu tiba di router)','treceive (waktu sampai di cloud)','bobot / bobot minimal','jumlah isi buffer','l_avg','formula p1','formula p2','formula p3','antrian','l_avg_0','l_avg_1','l_avg_2',
         'vt_0','vt_1','vt_2','waktu datang'])
 
+        def ChangeFinishTimeifExist(r):
+            try:
+                return r-data['tArrive'][0]
+            except Exception as e:
+                return r
+
         arrival_time = data['tArrive'].apply(lambda x: x-data['tArrive'][0])
-        finish_time = data['tFinish'].apply(lambda x: x-data['tArrive'][0])
+        finish_time = data['tFinish'].apply(ChangeFinishTimeifExist)
 
         data['tFinish'] = finish_time
         data['tArrive'] = arrival_time
