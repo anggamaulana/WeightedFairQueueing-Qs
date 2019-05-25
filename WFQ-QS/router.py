@@ -127,6 +127,7 @@ def sendpacket():
 		# PEMBOBOTAN
 		
 		l_avg_dump = [0,0,0]
+		fno_tmp=[0,0,0]
 		for sourcey in range(3):
 			PacketLength = packet_size[sourcey]
 			if sourcey == 0:
@@ -217,13 +218,14 @@ def sendpacket():
 			if flag_start[sourcey]==0:
 				prev_tV = 0			
 
-			fno = max( Vt + TDelay, prev_tV) + (PacketLength * 1.0 / weightF)
+			fno_tmp[sourcey] = max( Vt + TDelay, prev_tV) + (PacketLength * 1.0 / weightF)
 
 			
 			dump_formula[sourcey] = 'max(%f+%f, %f) + (%f * 1.0 / %f)' % (arrive,TDelay, tVirtual[sourcey], PacketLength, weightF)
 			# print(dump_formula[sourcey])
-			tVirtual[sourcey] = fno
+			
 			# source[sourcey]['fno'].append(fno)
+			
 
 
 		if daddr:
@@ -244,6 +246,9 @@ def sendpacket():
 				buffer3 = len(source[2]['data']) #cek buffer utk dimasukkan ke excel
 				data = source[min_priority]['data'].pop(0) #ambil data diujung antrian
 				tArrive = source[min_priority]['time'].pop(0) #ambil data diujung antrian
+
+				tVirtual[min_priority] = fno_tmp[min_priority]
+
 				if flag_start[min_priority]==0:
 					flag_start[sourcey]=1
 				
