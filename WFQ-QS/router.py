@@ -46,6 +46,7 @@ daddr=('68.183.235.119',8083)
 # daddr = None
 globalTime = None
 flag = 0
+flag_start = [0, 0, 0]
 rDash = 0
 l_avg_prev =[0,0,0]
 lambda_bandwidth=1
@@ -120,6 +121,7 @@ def sendpacket():
 	global tVirtual
 	global dump_formula
 	global arrivePrev
+	global flag_start
 	while True:
 
 		# PEMBOBOTAN
@@ -208,10 +210,14 @@ def sendpacket():
 
 			arrivePrev[sourcey] = arrive
 			tVirtualArrive[sourcey] = Vt
-			# fno = min(arrive+TDelay, tVirtual[sourcey]) + (PacketLength * 1.0 / weightF)
 			
-			# if sourcey==2:
-			fno = max( Vt + TDelay, tVirtual[sourcey]) + (PacketLength * 1.0 / weightF)
+			prev_tV = tVirtual[sourcey]
+
+			# cek apakah paket merupakan awal di buffernya
+			if flag_start[sourcey]==0:
+				prev_tV = 0			
+
+			fno = max( Vt + TDelay, prev_tV) + (PacketLength * 1.0 / weightF)
 
 			
 			dump_formula[sourcey] = 'max(%f+%f, %f) + (%f * 1.0 / %f)' % (arrive,TDelay, tVirtual[sourcey], PacketLength, weightF)
@@ -238,6 +244,8 @@ def sendpacket():
 				buffer3 = len(source[2]['data']) #cek buffer utk dimasukkan ke excel
 				data = source[min_priority]['data'].pop(0) #ambil data diujung antrian
 				tArrive = source[min_priority]['time'].pop(0) #ambil data diujung antrian
+				if flag_start[min_priority]==0:
+					flag_start[sourcey]=1
 				
 				try:
 					# s.sendto(data, daddr)		
