@@ -215,8 +215,8 @@ def sendpacket():
 			prev_tV = tVirtual[sourcey]
 
 			# cek apakah paket merupakan awal di buffernya
-			if flag_start[sourcey]==0:
-				prev_tV = 0			
+			# if flag_start[sourcey]==0:
+			# 	prev_tV = 0			
 
 			fno_tmp[sourcey] = max( Vt + TDelay, prev_tV) + (PacketLength * 1.0 / weightF)
 
@@ -249,8 +249,8 @@ def sendpacket():
 
 				tVirtual[min_priority] = fno_tmp[min_priority]
 
-				if flag_start[min_priority]==0:
-					flag_start[sourcey]=1
+				# if flag_start[min_priority]==0:
+				# 	flag_start[sourcey]=1
 				
 				try:
 					# s.sendto(data, daddr)		
