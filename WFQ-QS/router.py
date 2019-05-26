@@ -200,7 +200,7 @@ def sendpacket():
 			
 			if len(source[sourcey]['time'])<=0:
 				dump_formula[sourcey] = ' '
-				tVirtual[sourcey] = 0
+				fno_tmp[sourcey] = 0
 				
 				continue
 
@@ -233,12 +233,15 @@ def sendpacket():
 			minv = 1000000000
 			min_priority=0
 			for i in range(len(tVirtual)):
-				if tVirtual[i]<minv and tVirtual[i]!=0 and len(source[i]['data'])>0:
-					minv = tVirtual[i]
+				if fno_tmp[i]<minv and fno_tmp[i]!=0 and len(source[i]['data'])>0:
+					minv = fno_tmp[i]
 					min_priority = i
 			
 			# if len(source[min_priority]['time'])>0:
-				
+		
+			if fno_tmp[min_priority]!=0:
+				tVirtual[min_priority] = fno_tmp[min_priority]
+			# print("tVirtual",tVirtual , "fno_tmp[min_priority]", fno_tmp[min_priority])	
 			# jika ada data di antrian
 			if len(source[min_priority]['data'])>0:
 				buffer1 = len(source[0]['data']) #cek buffer utk dimasukkan ke excel
@@ -247,7 +250,7 @@ def sendpacket():
 				data = source[min_priority]['data'].pop(0) #ambil data diujung antrian
 				tArrive = source[min_priority]['time'].pop(0) #ambil data diujung antrian
 
-				tVirtual[min_priority] = fno_tmp[min_priority]
+				
 
 				# if flag_start[min_priority]==0:
 				# 	flag_start[sourcey]=1
@@ -260,7 +263,7 @@ def sendpacket():
 					
 					
 					# VERSI komplit
-					# data += ';'+';'.join([str(i) for i in numpackets])+';'+str(tArrive)+';'+str(tVirtual[min_priority])+'; ; ; ;'+str([buffer1, buffer2, buffer3])+';'+str(l_avg_dump)+';'+str(dump_formula[0])+';'+str(dump_formula[1])+';'+str(dump_formula[2])+';'+str(source[min_priority]['time'])+";"+";".join(dump_formula_lavg)+";"+";".join(dump_formula_vt)
+					data += ';'+';'.join([str(i) for i in numpackets])+';'+str(tArrive)+';'+str(tVirtual[min_priority])+'; ; ; ;'+str([buffer1, buffer2, buffer3])+';'+str(l_avg_dump)+';'+str(dump_formula[0])+';'+str(dump_formula[1])+';'+str(dump_formula[2])+';'+str(source[min_priority]['time'])+";"+";".join(dump_formula_lavg)+";"+";".join(dump_formula_vt)
 
 					# VERSI 1
 					# Nomor, prioritas, data, delay, bobot123, tarrive, tfinish, jumlah isi buffer, lavg, waktu datang.
@@ -268,7 +271,7 @@ def sendpacket():
 
 					# VERSI 2
 					# Isi nya nomor, prioritas, data, delay, bobot123, tarrive, jumlah isi buffer, waktu datang
-					data += ';'+';'.join([str(i) for i in numpackets])+';'+str(tArrive)+'; ; ; ; ;'+str([buffer1, buffer2, buffer3])+'; ; ; ; ; ; ; ; ; ; ; '
+					# data += ';'+';'.join([str(i) for i in numpackets])+';'+str(tArrive)+'; ; ; ; ;'+str([buffer1, buffer2, buffer3])+'; ; ; ; ; ; ; ; ; ; ; '
 
 					print("data prioritas ",min_priority," dikirim dengan data ", data)
 					s2.send(data) # kirim data ke cloud
